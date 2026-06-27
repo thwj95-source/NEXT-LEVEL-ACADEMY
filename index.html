@@ -2591,7 +2591,7 @@ function showResultPage(type, scores){
   if(ctaType) ctaType.textContent = tp.name;
 
   sessionStorage.setItem('fiq_quiz_result', JSON.stringify({type, scores}));
-  window.location.href = 'quiz-result-standalone.html';
+  window.location.href = 'result-page.html';
 }
 
 function shareWhatsApp(){
@@ -4521,7 +4521,7 @@ function launchDemo() {
     type: type,
     scores: { vision: r(30,99), beslut: r(30,99), kreativ: r(30,99), kamp: r(30,99), fysik: r(30,99), hold: r(30,99) }
   }));
-  window.location.href = 'quiz-result-standalone.html';
+  window.location.href = 'result-page.html';
 }
 </script>
 </body>

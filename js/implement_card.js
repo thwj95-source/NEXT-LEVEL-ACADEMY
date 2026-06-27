@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT     = __dirname;
-const HTML_IN  = path.join(ROOT, 'quiz-result-standalone.html');
+const HTML_IN  = path.join(ROOT, 'result-page.html');
 const SVG_PATH = path.join(ROOT, 'assets', 'Card', 'frame.SAFE.svg');
 
 let html = fs.readFileSync(HTML_IN, 'utf8');
