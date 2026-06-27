@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FootballIQ — Dit Resultat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    a { color: inherit; text-decoration: none; }
+
+    :root {
+      --accent: #ff6a00;
+      --accent2: #ff8c00;
+      --purple: #8b5cf6;
+      --bg: #0b0f1a;
+      --card-bg: #0b0b12;
+      --text: #f0f0f5;
+      --muted: #888;
+      --font-b: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-d: 'Barlow Condensed', 'Arial Narrow', Arial, Impact, sans-serif;
+    }
+
+    body {
+      background: #0b0f1a;
+      font-family: var(--font-b);
+      color: #f0f0f5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(11,15,26,0.96); backdrop-filter: blur(16px);
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      padding: 0 1.5rem; display: flex; align-items: center; gap: 1rem; height: 52px;
+    }
+    .nav-logo { display:flex; align-items:center; gap:9px; cursor:pointer; flex-shrink:0; }
+    .nav-logo-icon { width:30px; height:30px; flex-shrink:0; }
+    .nav-logo-text { display:flex; flex-direction:column; line-height:1; }
+    .nav-logo-top { font-family:var(--font-d); font-size:15px; font-weight:900; color:#fff; letter-spacing:1px; text-transform:uppercase; }
+    .nav-logo-bottom { font-family:var(--font-d); font-size:8px; font-weight:700; color:var(--accent); letter-spacing:3px; text-transform:uppercase; }
+    .nav-links { display:flex; align-items:center; gap:4px; margin-left:auto; }
+    .nav-link { padding:7px 16px; border-radius:99px; font-size:13px; font-weight:500; cursor:pointer; border:none; background:transparent; color:rgba(255,255,255,0.45); transition:all 0.2s; font-family:var(--font-b); white-space:nowrap; }
+    .nav-link:hover { color:#fff; background:rgba(255,255,255,0.06); }
+    .nav-link.active { background:var(--accent); color:#fff; }
+    .theme-toggle { padding:5px 12px; border-radius:99px; font-size:12px; cursor:pointer; border:0.5px solid rgba(255,255,255,0.12); background:transparent; color:rgba(255,255,255,0.45); font-family:var(--font-b); }
+    .nav-hamburger { display:none; flex-direction:column; justify-content:center; gap:5px; width:36px; height:36px; background:rgba(255,255,255,0.05); border:0.5px solid rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; padding:7px; margin-left:auto; }
+    .nav-hamburger span { display:block; height:2px; background:#fff; border-radius:2px; transition:all 0.25s; }
+    .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity:0; }
+    .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .nav-drawer { display:none; position:fixed; top:52px; left:0; right:0; background:#0b0f1a; border-bottom:0.5px solid rgba(255,255,255,0.08); padding:1rem; z-index:99; flex-direction:column; gap:6px; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+    .nav-drawer.open { display:flex; }
+    .nav-drawer .nav-link { width:100%; text-align:left; padding:11px 14px; font-size:14px; border-radius:8px; }
+    @media (max-width:700px) { .nav-links { display:none; } .nav-hamburger { display:flex; } }
+
+    /* ── PAGE ── */
+    .page {
+      max-width: 480px;
+      margin: 52px auto 0;
+      padding: 0 16px 60px;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0 2px;
+    }
+    .btn-back, .btn-share-top {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-b); font-size: 13px;
+      color: rgba(255,255,255,0.45); transition: color 0.2s;
+    }
+    .btn-back:hover, .btn-share-top:hover { color: #fff; }
+
+    /* ── CARD ── */
+    .card-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 2px 0 0;
+      overflow: visible !important;
+      border-radius: 0 !important;
+    }
+
+    /* Outer glow — filter:drop-shadow follows the octagonal clip-path shape */
+    .card-glow-wrap {
+      display: flex;
+      overflow: visible !important;
+      border-radius: 0 !important;
+    }
+    .card-glow-wrap.tier-bronze {
+      filter: drop-shadow(0 0 18px rgba(255,106,0,0.75))
+              drop-shadow(0 0 45px rgba(255,106,0,0.35));
+    }
+    .card-glow-wrap.tier-silver {
+      filter: drop-shadow(0 0 16px rgba(168,168,184,0.55))
+              drop-shadow(0 0 40px rgba(168,168,184,0.22));
+    }
+    .card-glow-wrap.tier-gold {
+      filter: drop-shadow(0 0 18px rgba(201,168,0,0.7))
+              drop-shadow(0 0 45px rgba(201,168,0,0.28));
+    }
+    .card-glow-wrap.tier-elite {
+      filter: drop-shadow(0 0 18px rgba(123,47,255,0.75))
+              drop-shadow(0 0 45px rgba(123,47,255,0.35));
+    }
+    .card-glow-wrap.tier-legend {
+      filter: drop-shadow(0 0 18px rgba(255,215,0,0.75))
+              drop-shadow(0 0 45px rgba(255,215,0,0.35));
+    }
+
+    /* ── CARD CLIP + BORDER CARRIER ── */
+    /* clip-path lives here so overflow:hidden clips everything inside cleanly */
+    .card-placeholder {
+      display: inline-block;
+      background: transparent;
+      padding: 2px;
+      clip-path: polygon(50% 0%, 61% 6%, 80% 6%, 95% 16%, 95% 30%, 100% 38%, 100% 62%, 95% 70%, 95% 84%, 80% 94%, 61% 94%, 50% 100%, 39% 94%, 20% 94%, 5% 84%, 5% 70%, 0% 62%, 0% 38%, 5% 16%, 20% 6%, 39% 6%);
+      overflow: hidden;
+      border-radius: 0 !important;
+    }
+    .card-placeholder.tier-bronze { background: transparent; }
+    .card-placeholder.tier-silver { background: #a8a8b8; }
+    .card-placeholder.tier-gold   { background: #c9a800; }
+    .card-placeholder.tier-elite  { background: #7b2fff; }
+    .card-placeholder.tier-legend { background: linear-gradient(160deg, #ffd700, #c9a800); }
+
+    /* Dark card interior */
+    .card-inner {
+      width: 284px;
+      position: relative;
+      overflow: hidden;
+      clip-path: polygon(50% 0%, 61% 6%, 80% 6%, 95% 16%, 95% 30%, 100% 38%, 100% 62%, 95% 70%, 95% 84%, 80% 94%, 61% 94%, 50% 100%, 39% 94%, 20% 94%, 5% 84%, 5% 70%, 0% 62%, 0% 38%, 5% 16%, 20% 6%, 39% 6%) !important;
+      display: flex;
+      flex-direction: column;
+      padding-top: 6px;
+      padding-bottom: 2px;
+      background-color: #0b0b12;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.015) 8px, rgba(255,255,255,0.015) 9px);
+      background-size: 18px 18px, auto;
+      --accent: transparent;
+      --accent-glow-color: transparent;
+      --tier-stat-border: transparent;
+    }
+
+    /* ── TIER THEMES ── */
+    .card-inner.tier-bronze {
+      --accent: #ff6a00;
+      --accent-glow-color: rgba(255,106,0,0.38);
+      --tier-stat-border: rgba(255,106,0,0.3);
+      background-color: #0b0c0f;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.015) 8px, rgba(255,255,255,0.015) 9px),
+        linear-gradient(170deg, #0d0a08 0%, #1a0d04 55%, #0d0a08 100%);
+      background-size: 18px 18px, auto, auto;
+    }
+    .card-inner.tier-silver {
+      --accent: #a8a8b8;
+      --accent-glow-color: rgba(168,168,184,0.28);
+      --tier-stat-border: rgba(168,168,184,0.3);
+      background-color: #0d0d12;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.015) 8px, rgba(255,255,255,0.015) 9px),
+        linear-gradient(170deg, #0d0d12 0%, #1e1e28 55%, #0d0d12 100%);
+      background-size: 18px 18px, auto, auto;
+    }
+    .card-inner.tier-gold {
+      --accent: #c9a800;
+      --accent-glow-color: rgba(201,168,0,0.35);
+      --tier-stat-border: rgba(201,168,0,0.3);
+      background-color: #0c0a04;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.015) 8px, rgba(255,255,255,0.015) 9px),
+        linear-gradient(170deg, #0c0a04 0%, #1e1800 55%, #0c0a04 100%);
+      background-size: 18px 18px, auto, auto;
+    }
+    .card-inner.tier-elite {
+      --accent: #9b5fff;
+      --accent-glow-color: rgba(123,47,255,0.35);
+      --tier-stat-border: rgba(123,47,255,0.3);
+      background-color: #08060f;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.015) 8px, rgba(255,255,255,0.015) 9px),
+        linear-gradient(170deg, #08060f 0%, #140030 55%, #08060f 100%);
+      background-size: 18px 18px, auto, auto;
+    }
+    .card-inner.tier-legend {
+      --accent: #ffd700;
+      --accent-glow-color: rgba(255,215,0,0.35);
+      --tier-stat-border: rgba(255,215,0,0.3);
+      background-color: #0a0900;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.015) 8px, rgba(255,255,255,0.015) 9px),
+        linear-gradient(170deg, #0a0900 0%, #1e1600 55%, #0a0900 100%);
+      background-size: 18px 18px, auto, auto;
+    }
+
+    .card-inner::before { display: none; clip-path: polygon(50% 0%, 61% 6%, 80% 6%, 95% 16%, 95% 30%, 100% 38%, 100% 62%, 95% 70%, 95% 84%, 80% 94%, 61% 94%, 50% 100%, 39% 94%, 20% 94%, 5% 84%, 5% 70%, 0% 62%, 0% 38%, 5% 16%, 20% 6%, 39% 6%) !important; }
+    /* Inner subtle white border */
+    .card-inner::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      clip-path: polygon(50% 0%, 61% 6%, 80% 6%, 95% 16%, 95% 30%, 100% 38%, 100% 62%, 95% 70%, 95% 84%, 80% 94%, 61% 94%, 50% 100%, 39% 94%, 20% 94%, 5% 84%, 5% 70%, 0% 62%, 0% 38%, 5% 16%, 20% 6%, 39% 6%) !important;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* OVR block */
+    .card-ovr-block {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 4;
+      line-height: 1;
+    }
+    .card-ovr {
+      font-family: var(--font-d);
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 0.88;
+      letter-spacing: -1px;
+    }
+    .card-ovr-lbl {
+      font-family: var(--font-d);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .card-pos {
+      font-family: var(--font-d);
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-top: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Top-right icons */
+    .card-top-right {
+      position: absolute;
+      top: 16px;
+      right: 14px;
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      align-items: flex-end;
+    }
+
+    /* Silhouette zone — height:auto so the SVG is never cropped */
+    .card-silhouette-zone {
+      position: relative;
+      flex: 0 0 auto;
+      height: auto;
+      overflow: visible;
+      margin-top: -8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-glow-radial {
+      display: block;
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 58%, var(--accent-glow-color, rgba(255,106,0,0.32)), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .card-silhouette-wrap {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-silhouette-zone svg,
+    .card-silhouette-zone img {
+      height: 105px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    /* Divider */
+    .card-divider {
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,106,0,0.55) 30%, rgba(255,106,0,0.55) 70%, transparent 100%);
+      margin: 0 10px;
+      flex-shrink: 0;
+    }
+
+    /* Name + tagline */
+    .card-name-section {
+      padding-top: 8px;
+      text-align: center;
+    }
+    .card-typename {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .player-emoji {
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .player-name {
+      font-family: var(--font-d);
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+    .card-tagline {
+      font-size: 8px;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Stats grid */
+    .card-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      padding: 5px 9px 0;
+    }
+    .card-stats-grid > div {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--tier-stat-border);
+      border-radius: 3px;
+      padding: 3px 4px 4px;
+      text-align: center;
+    }
+    .card-stat-lbl {
+      font-family: var(--font-d);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 1px;
+    }
+    .card-stat-val {
+      font-family: var(--font-d);
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    /* Level badge */
+    .card-level-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 4px auto 2px;
+      width: fit-content;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      padding: 5px 18px 5px 14px;
+      font-family: var(--font-d);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: transparent;
+      clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%);
+    }
+
+    .card-tier-badge {
+      display: block;
+      text-align: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 6px 16px;
+      border: 1px solid currentColor;
+      border-radius: 20px;
+      margin: 2px auto 8px;
+    }
+
+    /* ── PROGRESSION ── */
+    .level-section {
+      margin-top: 2px;
+      padding: 4px 0;
+    }
+    .level-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .level-progression {
+      position: relative;
+      padding: 0 4px 4px;
+    }
+    .level-track {
+      position: absolute;
+      top: 20px;
+      left: 9%;
+      right: 9%;
+      height: 2px;
+      background: rgba(255,255,255,0.12);
+      z-index: 0;
+    }
+    .level-track-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff6a00, #ff8c00);
+      transition: width 0.7s ease;
+    }
+    .level-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+    .level-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      opacity: 0.38;
+      filter: grayscale(1);
+      transition: opacity 0.3s, filter 0.3s;
+    }
+    .level-step.active { opacity: 1; filter: none; }
+    .shield-wrap { width: 40px; height: 44px; display:flex; align-items:center; justify-content:center; overflow:visible; }
+    .shield-wrap svg { overflow: visible; }
+    .level-step.active .shield-wrap svg { filter: drop-shadow(0 0 6px rgba(255,106,0,0.5)); }
+    .step-name { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.38); margin-top: 4px; text-align: center; line-height: 1.2; white-space: nowrap; }
+    .level-step.active .step-name { color: #ff6a00; }
+    .step-desc { font-size: 8px; color: transparent; text-align: center; margin-top: 1px; white-space: nowrap; }
+    .level-step.active .step-desc { color: rgba(255,255,255,0.38); }
+
+    /* Shield bg/icon states */
+    .level-step .shield-wrap path { fill: rgba(255,255,255,0.06); stroke: rgba(255,255,255,0.25); }
+    .level-step.active .shield-wrap path { fill: #ff6a00; stroke: rgba(255,255,255,0.4); }
+    .level-step.active .shield-wrap text { fill: #fff; }
+    .level-step.active .shield-wrap circle { stroke: #fff; }
+    .level-step.active .shield-wrap circle:not([fill="none"]) { fill: #fff; }
+    .level-step.active .shield-wrap circle[fill="none"] { fill: none; }
+    .level-step.active .shield-wrap polygon { fill: #fff; stroke: #fff; }
+    .level-step.active .shield-wrap rect { fill: #fff; }
+
+    /* ── BOTTOM SECTION ── */
+    .bottom-section {
+      margin-top: 4px;
+      padding: 16px 16px 12px;
+      border: 1px solid rgba(255, 106, 0, 0.25);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .type-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 3px;
+      color: var(--purple); text-transform: uppercase; margin-bottom: 5px;
+    }
+    .type-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    }
+    .type-emoji { font-size: 26px; line-height: 1; }
+    .type-name {
+      font-family: var(--font-d);
+      font-size: 32px; font-weight: 900; color: #fff;
+      line-height: 1; letter-spacing: 0.03em;
+    }
+    .type-desc {
+      display: block !important;
+      font-size: 14px; line-height: 1.6; margin-bottom: 4px;
+      color: rgba(255,255,255,0.6) !important;
+    }
+    .type-desc, .type-desc *, .type-desc a, .type-desc span {
+      color: rgba(255,255,255,0.6) !important;
+      text-decoration: none !important;
+      background: none !important;
+    }
+
+    /* Role models */
+    .rolemodel-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 2px;
+      flex-wrap: wrap;
+    }
+    .rolemodel-avatars { display: flex; gap: 12px; }
+    .rolemodel-avatar {
+      width: 78px; height: 78px; border-radius: 40%;
+      background: #0d0d1a;
+      border: 1.5px solid rgba(255,106,0,0.5);
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: inset 0 0 12px rgba(100,40,160,0.4),
+                  0 0 6px rgba(255,106,0,0.25);
+    }
+    .avatar-lock {
+      position: absolute;
+      bottom: -5px; left: 50%; transform: translateX(-50%);
+      background: #0d0d1a;
+      border: 1px solid rgba(255,106,0,0.5);
+      border-radius: 50%;
+      width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; line-height: 1;
+    }
+    .rolemodel-text { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+    .rolemodel-unlock {
+      background: none; border: none; color: var(--accent);
+      font-size: 13px; cursor: pointer; padding: 0;
+      font-family: inherit; font-weight: 600;
+    }
+
+    /* CTAs */
+    .cta-stack { display: flex; flex-direction: column; gap: 5px; padding-bottom: 16px; }
+    .btn-primary {
+      width: 100%; padding: 13px 20px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      font-family: var(--font-b); transition: background 0.15s; letter-spacing: 0.01em;
+    }
+    .btn-primary:hover { background: #e05000; }
+    .btn-secondary {
+      width: 100%; padding: 13px 20px;
+      background: transparent; color: #ff6a00;
+      border: 1.5px solid #ff6a00; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: var(--font-b);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-secondary:hover { background: rgba(255,106,0,0.07); }
+
+    /* ── BELOW-FOLD ── */
+    .sep {
+      height: 1px; margin: 24px 0;
+      background: linear-gradient(90deg, transparent, rgba(255,107,26,0.22), transparent);
+    }
+
+    .dna-section {
+      background: #111827; border-radius: 16px;
+      border: 1px solid rgba(255,107,26,0.2); padding: 18px;
+    }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--purple); text-transform: uppercase; }
+    .section-sub { font-size: 13px; color: rgba(255,255,255,0.38); margin-top: 4px; margin-bottom: 18px; }
+    #radar-svg-wrap { width: 100%; margin: -20px 0; overflow: hidden; }
+    .dna-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+    .dna-card { background: #1F2937; border: 1px solid #374151; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+    .dna-val { font-size: 36px; font-weight: 900; line-height: 1; }
+    .dna-name { font-size: 12px; font-weight: 600; color: #fff; }
+    .dna-hint { font-size: 11px; color: rgba(255,255,255,0.38); }
+    .identity-wrap { margin-top: 20px; text-align: center; }
+    .identity-words { font-size: 17px; font-weight: 900; color: #fff; letter-spacing: 0.1em; text-transform: uppercase; }
+    .identity-text { font-size: 13px; color: rgba(255,255,255,0.38); line-height: 1.7; margin-top: 6px; }
+
+    .challenge-section { background: #fff; border: 1px solid #E5E7EB; border-left: 4px solid #10B981; border-radius: 16px; padding: 18px; }
+    .challenge-title { font-size: 17px; font-weight: 700; color: #111827; margin-bottom: 10px; }
+    .challenge-card { background: #111827; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; }
+    .challenge-card-text { font-size: 14px; font-weight: 600; color: #fff; }
+    .challenge-card-sub { font-size: 12px; color: rgba(255,255,255,0.38); margin-top: 3px; }
+    .xp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+    .xp-badge { background: #D1FAE5; color: #065F46; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .progress-track { flex: 1; height: 6px; background: #E5E7EB; border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #10B981; border-radius: 999px; }
+    .progress-label { font-size: 12px; color: #6B7280; white-space: nowrap; }
+    .xp-note { font-size: 11px; color: #9CA3AF; margin-bottom: 12px; }
+    .btn-green { width: 100%; padding: 13px 20px; background: #10B981; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .login-hint { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 10px; font-size: 12px; color: #9CA3AF; }
+
+    .premium-section { background: #111827; border: 1px solid rgba(139,92,246,0.2); border-left: 3px solid var(--purple); border-radius: 16px; padding: 18px; }
+    .premium-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 5px; }
+    .premium-sub { font-size: 14px; color: rgba(255,255,255,0.38); line-height: 1.6; margin-bottom: 16px; }
+    .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; margin-bottom: 18px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.5); }
+    .feature-item.highlight { color: #fff; font-weight: 600; }
+    .feature-check { color: var(--purple); font-weight: 700; font-size: 13px; flex-shrink: 0; line-height: 1.3; }
+    .premium-price { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 12px; }
+    .premium-price span { font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.4); }
+    .btn-purple { width: 100%; padding: 13px 20px; background: var(--purple); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; margin-bottom: 7px; }
+    .btn-outlined-dark { width: 100%; padding: 11px 20px; background: transparent; color: rgba(255,255,255,0.4); border: 1.5px solid #374151; border-radius: 10px; font-size: 13px; cursor: pointer; font-family: inherit; }
+
+    .actions-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .btn-action { display: flex; flex-direction: column; align-items: center; gap: 5px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 8px; color: rgba(255,255,255,0.38); font-size: 12px; cursor: pointer; font-family: inherit; }
+    .btn-action svg { display: block; }
+
+    p { color: rgba(255,255,255,0.6); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+    html  { max-width: 100%; overflow-x: hidden; }
+    body  { max-width: 100%; overflow-x: clip; } /* clip skaber ikke scroll-container; iOS scroll bevares */
+
+    /* ── Tablet ≤ 900px ── */
+    @media (max-width: 900px) {
+      .page { max-width: 100%; }
+    }
+
+    /* ── Mobile ≤ 640px ── */
+    @media (max-width: 640px) {
+      .page { padding: 0 16px 60px; }
+
+      /* Card: scale width to viewport, keep proportions */
+      .player-card { width: min(300px, 88vw); }
+      .card-name-row   { margin-bottom: 2px; }
+      .card-tagline    { margin-bottom: 4px; }
+      .card-stats-grid { gap: 2px; }
+      .card-stat-val   { font-size: 20px; }
+
+      /* OVR: slightly smaller so it doesn't crowd the top */
+      .card-ovr { font-size: 44px; }
+
+      /* Kompakt lodret spacing + negativ margin trækker DIT NIVEAU op
+         forbi SVG'ens dekorative bundzone (~81px under frame-rektanglet) */
+      .result-scene { padding-bottom: 2px; margin-bottom: -53px; }
+
+      /* Progression: allow horizontal scroll inside section only */
+      .level-section {
+        overflow: hidden;
+        margin-top: 0;
+        padding: 0;
+      }
+      .level-section-label { margin-bottom: 2px; }
+      .level-progression {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0;
+      }
+      .level-steps { min-width: 300px; }
+      /* Hide invisible step-desc — still occupies layout width, causes crowding */
+      .step-desc { display: none !important; }
+
+      /* Bottom section mobile */
+      .bottom-section  { margin-top: 22px; padding: 2px 14px 2px; }
+
+      /* Hide eyebrow label */
+      .type-label      { display: none; }
+
+      /* Title: emoji + name on one line */
+      .type-row        { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; margin-bottom: 0; }
+      .type-name       { font-size: 24px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+      /* Description */
+      .type-desc       { margin-bottom: 2px; font-size: 13px; }
+
+      /* Role model row: 2-col grid — avatars left, text right */
+      .rolemodel-row {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 0;
+      }
+      .rolemodel-avatars   { display: flex; gap: 6px; }
+      .rolemodel-avatar    { width: 44px; height: 44px; }
+      .rolemodel-avatar svg { width: 22px !important; height: 28px !important; }
+      .avatar-lock         { width: 14px; height: 14px; font-size: 7px; bottom: -4px; }
+
+      /* CTAs */
+      .cta-stack       { margin-top: 0; gap: 5px; padding-bottom: 4px; }
+      .btn-primary     { width: 100%; min-height: 48px; padding-top: 13px; padding-bottom: 13px; }
+      .btn-secondary   { width: 100%; min-height: 48px; padding-top: 11px; padding-bottom: 11px; }
+      .btn-green       { min-height: 48px; }
+      .btn-purple      { min-height: 48px; }
+
+      /* Extra bottom room so buttons clear viewport edge */
+      .page            { padding-bottom: 80px; }
+    }
+
+    /* ── Small mobile ≤ 420px ── */
+    @media (max-width: 420px) {
+      .page { padding: 0 12px 60px; }
+
+      /* Card scales tighter */
+      .player-card { width: min(300px, 92vw); }
+
+      /* OVR + card text scale down */
+      .card-ovr      { font-size: 40px; }
+      .player-name   { font-size: 22px; }
+      .card-stat-val { font-size: 22px; }
+      .card-tagline  { font-size: 9px; letter-spacing: 1.5px; }
+      .card-ovr-lbl  { font-size: 12px; }
+      .card-pos      { font-size: 11px; }
+
+      /* Progression shields: shrink slightly */
+      .shield-wrap          { width: 34px; height: 38px; }
+      .shield-wrap svg      { width: 28px !important; height: 33px !important; }
+      .step-name            { font-size: 8px; }
+
+      /* Bottom section text */
+      .type-name  { font-size: 22px; }
+      .type-desc  { font-size: 13px; }
+
+      /* Role model avatars: keep new design size */
+
+      /* DNA grid: 1 column */
+      .dna-grid { grid-template-columns: 1fr; }
+
+      /* Features grid: 1 column */
+      .features-grid { grid-template-columns: 1fr; }
+
+      /* Challenge section text */
+      .challenge-card-text { font-size: 13px; }
+
+      /* Actions row: keep 3 cols but reduce padding */
+      .btn-action { padding: 10px 4px; font-size: 11px; }
+    }
+
+    /* ── 390px — proportional card scale ── */
+    @media (max-width: 390px) {
+      .player-card           { width: min(290px, 92vw); }
+      .card-silhouette-zone  { height: 200px; }
+      .card-ovr              { font-size: 42px; }
+      .player-name           { font-size: 20px; }
+      .card-stat-val         { font-size: 24px; }
+    }
+
+    /* ── 360px — progression no-scroll, smallest shields ── */
+    @media (max-width: 360px) {
+      .level-steps  { min-width: unset; width: 100%; }
+      .shield-wrap  { width: 28px; height: 32px; }
+      .shield-wrap svg { width: 24px !important; height: 28px !important; }
+    }
+
+    /* ══════════════════════════════════════════════════
+       SVG FRAME ARCHITECTURE
+       ══════════════════════════════════════════════════ */
+
+    /* Outer container — width drives everything; SVG frame stretches to match */
+    .player-card {
+      position: relative;
+      display: inline-block;
+      overflow: visible;
+      width: min(320px, 92vw);
+      aspect-ratio: auto;
+      filter:
+        drop-shadow(0 0 20px var(--frame-glow, rgba(200,99,26,0.55)))
+        drop-shadow(0 0 8px var(--frame-glow, rgba(200,99,26,0.55)))
+        drop-shadow(0 0 3px var(--frame, #c8631a));
+    }
+
+    /* Tier CSS variables */
+    .player-card[data-tier="bronze"] {
+      --frame: #c8631a;
+      --frame-secondary: #7a3a0a;
+      --frame-glow: rgba(200,99,26,0.55);
+    }
+    .player-card[data-tier="silver"] {
+      --frame: #a8a8b8;
+      --frame-secondary: #737383;
+      --frame-glow: rgba(168,168,184,0.45);
+    }
+    .player-card[data-tier="gold"] {
+      --frame: #c9a800;
+      --frame-secondary: #8f7600;
+      --frame-glow: rgba(201,168,0,0.5);
+    }
+    .player-card[data-tier="elite"] {
+      --frame: #7b2fff;
+      --frame-secondary: #4b1fb8;
+      --frame-glow: rgba(123,47,255,0.55);
+    }
+    .player-card[data-tier="legend"] {
+      --frame: #ffd700;
+      --frame-secondary: #c9a800;
+      --frame-glow: rgba(255,215,0,0.6);
+    }
+
+    /* SVG frame: absolutely fills player-card, draws outline, provides glow */
+    .card-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      pointer-events: none;
+      overflow: visible;
+      filter: drop-shadow(0 0 16px var(--frame-glow, rgba(200,99,26,0.55)))
+              drop-shadow(0 0 32px var(--frame-glow, rgba(200,99,26,0.55)));
+    }
+
+    /* Background layer: clipped dark fill in the exact shield shape */
+    .card-bg-effects {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      clip-path: polygon(50% 0.5%, 53.75% 3.9%, 59.4% 5.9%, 79.1% 5.9%, 95% 15.9%, 95% 27.7%, 91.25% 31.8%, 91.25% 34.1%, 95% 38%, 100% 43.9%, 100% 60.2%, 95% 66.1%, 95% 84.1%, 79.1% 94.1%, 60.9% 94.1%, 53.75% 96.1%, 50% 100%, 46.25% 96.1%, 39.1% 94.1%, 20.9% 94.1%, 5% 84.1%, 5% 66.1%, 0% 60.2%, 0% 43.9%, 5% 38%, 8.75% 34.1%, 8.75% 31.8%, 5% 27.7%, 5% 15.9%, 20.9% 5.9%, 40.6% 5.9%, 46.25% 3.9%);
+      opacity: 1;
+      background:
+        radial-gradient(circle, var(--frame) 0.8px, transparent 0.8px) 75% 30% / 14px 14px,
+        repeating-linear-gradient(45deg, transparent 0 9px, rgba(255,255,255,0.025) 9px 10px),
+        radial-gradient(ellipse 55% 45% at 50% 42%, var(--frame-glow) 0%, transparent 70%),
+        radial-gradient(ellipse at 50% 40%, #1a1a24 0%, #0d0d14 100%);
+    }
+
+    /* Content layer: pads content away from SVG frame edges */
+    .card-content {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      padding: 5% 12% 4%;
+      box-sizing: border-box;
+    }
+
+    /* card-inner is now a transparent flex child — layout only, no clipping */
+    .player-card .card-inner {
+      width: 100% !important;
+      clip-path: none !important;
+      background: transparent !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    /* Crown: legend tier only */
+    .card-frame .frame-crown { display: none; }
+    .player-card[data-tier="legend"] .card-frame .frame-crown { display: block; }
+
+    /* Tier accent/color variables cascade from data-tier into card-inner children */
+    [data-tier="bronze"] .card-inner {
+      --accent: #c8631a;
+      --accent-glow-color: rgba(200,99,26,0.38);
+      --tier-stat-border: rgba(200,99,26,0.3);
+    }
+    [data-tier="silver"] .card-inner {
+      --accent: #a8a8b8;
+      --accent-glow-color: rgba(168,168,184,0.28);
+      --tier-stat-border: rgba(168,168,184,0.3);
+    }
+    [data-tier="gold"] .card-inner {
+      --accent: #c9a800;
+      --accent-glow-color: rgba(201,168,0,0.35);
+      --tier-stat-border: rgba(201,168,0,0.3);
+    }
+    [data-tier="elite"] .card-inner {
+      --accent: #9b5fff;
+      --accent-glow-color: rgba(123,47,255,0.35);
+      --tier-stat-border: rgba(123,47,255,0.3);
+    }
+    [data-tier="legend"] .card-inner {
+      --accent: #ffd700;
+      --accent-glow-color: rgba(255,215,0,0.35);
+      --tier-stat-border: rgba(255,215,0,0.3);
+    }
+
+
+    /* Divider inherits tier accent */
+    .card-divider {
+      background: linear-gradient(90deg, transparent 0%, var(--accent, rgba(255,106,0,0.55)) 30%, var(--accent, rgba(255,106,0,0.55)) 70%, transparent 100%) !important;
+    }
+
+    /* ── Content layout ── */
+
+    /* Header row: 3 columns — OVR | name+tagline | icons */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      margin-bottom: 4px;
+      padding-top: 18px;
+    }
+
+    /* OVR block: static in header left column */
+    .player-card .card-ovr-block {
+      position: static;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* Center column: name + tagline */
+    .card-center-col {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 4px;
+      min-width: 0;
+    }
+
+    /* Icons: static in header right column */
+    .player-card .card-top-right {
+      position: static;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    /* Reduce gap between stats grid and tier badge */
+    .card-stats-grid {
+      margin-bottom: 4px;
+    }
+
+    /* ── Disable old frame styles that conflict ── */
+    .card-placeholder {
+      background: transparent !important;
+      padding: 0 !important;
+      clip-path: none !important;
+    }
+    .card-glow-wrap,
+    .card-glow-wrap.tier-bronze,
+    .card-glow-wrap.tier-silver,
+    .card-glow-wrap.tier-gold,
+    .card-glow-wrap.tier-elite,
+    .card-glow-wrap.tier-legend {
+      filter: none !important;
+    }
+    .card-inner::after {
+      display: none !important;
+    }
+
+
+    /* ============================================================
+       FOOTBALLIQ — SPILLERKORT  |  Mobil-first: 390px
+       ============================================================ */
+
+    /* --- Tier CSS-variable --- */
+    [data-tier="bronze"] {
+      --frame:           #c8893a;
+      --frame-secondary: #a06028;
+      --frame-glow:      rgba(200,137,58,0.55);
+      --card-bg-a:       #3d1f06;
+      --card-bg-b:       #180900;
+      --text-hi:         #f2d48a;
+      --text-lo:         rgba(242,212,138,0.60);
+    }
+    [data-tier="silver"] {
+      --frame:           #b4c8d8;
+      --frame-secondary: #7a96aa;
+      --frame-glow:      rgba(180,200,216,0.45);
+      --card-bg-a:       #1c2830;
+      --card-bg-b:       #081016;
+      --text-hi:         #d0e4f4;
+      --text-lo:         rgba(208,228,244,0.60);
+    }
+    [data-tier="gold"] {
+      --frame:           #e8bf38;
+      --frame-secondary: #c09010;
+      --frame-glow:      rgba(232,191,56,0.65);
+      --card-bg-a:       #3a2200;
+      --card-bg-b:       #180e00;
+      --text-hi:         #fde888;
+      --text-lo:         rgba(253,232,136,0.60);
+    }
+    [data-tier="elite"] {
+      --frame:           #b06ae8;
+      --frame-secondary: #7a34c0;
+      --frame-glow:      rgba(176,106,232,0.70);
+      --card-bg-a:       #1e0838;
+      --card-bg-b:       #0a0320;
+      --text-hi:         #dfb8ff;
+      --text-lo:         rgba(223,184,255,0.60);
+    }
+    [data-tier="legend"] {
+      --frame:           #ff5a24;
+      --frame-secondary: #cc2800;
+      --frame-glow:      rgba(255,90,36,0.80);
+      --card-bg-a:       #3a0800;
+      --card-bg-b:       #160200;
+      --text-hi:         #ff9a72;
+      --text-lo:         rgba(255,154,114,0.60);
+    }
+
+    /* --- Scene --- */
+    .result-scene {
+      display: flex;
+      justify-content: center;
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      padding: 6px 0 3rem;
+    }
+
+    /* --- Card wrapper --- */
+    .card-wrapper {
+      position: relative;
+      width: 100vw;
+      aspect-ratio: 406 / 407;
+      background: transparent;
+      border-radius: 3px;
+      filter: none;
+      transition: filter .35s ease, transform .35s ease;
+    }
+    .card-wrapper:hover {
+      filter: none;
+      transform: translateY(-3px) scale(1.015);
+    }
+
+    /* --- Lag 1: radial top-gloed --- skjult (debug) */
+    .card-bg-glow {
+      display: none !important;
+      position: absolute; inset: 0;
+      background: radial-gradient(
+        ellipse 85% 52% at 50% 0%,
+        color-mix(in srgb, var(--frame, #e8bf38) 16%, transparent),
+        transparent 62%
+      );
+      border-radius: 3px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* --- Lag 2: SVG kortramme --- */
+    .card-frame {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* --- Lag 3: indhold --- */
+    .card-content {
+      position: absolute; inset: 0;
+      z-index: 3;
+      font-family: 'Rajdhani', 'Arial Narrow', Arial, sans-serif;
+      color: var(--text-hi, #fde888);
+    }
+
+    /* OVR + position */
+    .card-meta {
+      position: absolute;
+      top: 9%; left: 9%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1;
+      gap: 2px;
+    }
+    .card-ovr {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: clamp(1.9rem, 10vw, 2.7rem);
+      color: var(--text-hi);
+      letter-spacing: -1px;
+      text-shadow: 0 0 8px color-mix(in srgb, var(--frame) 55%, transparent);
+      line-height: 1;
+    }
+    .card-pos {
+      font-size: clamp(0.55rem, 2.8vw, 0.75rem);
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-hi);
+      opacity: 0.85;
+    }
+
+    /* Spillerbillede — skjult (debug) */
+    .card-player-zone,
+    .card-player-zone *,
+    .card-player-img,
+    .card-player-fallback {
+      display: none !important;
+    }
+    .card-player-zone {
+      position: absolute;
+      top: 3%; left: 50%;
+      transform: translateX(-50%);
+      width: 60%; height: 55%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .card-player-img-wrap {
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .card-player-img {
+      max-height: 100%; max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.55));
+    }
+    .card-player-fallback {
+      height: 82%;
+      color: var(--text-hi);
+    }
+
+    /* Bund-sektion */
+    .card-lower {
+      position: absolute;
+      bottom: 5%; left: 0; right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 0 8%;
+    }
+
+    .card-name-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      width: 100%;
+    }
+    .card-name {
+      font-size: clamp(0.75rem, 3.8vw, 1rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-hi);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .card-tagline {
+      font-size: clamp(0.42rem, 2vw, 0.58rem);
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-lo);
+      text-align: center;
+    }
+
+    /* Stats 2x3 */
+    .card-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, auto);
+      column-gap: 6px;
+      row-gap: 1px;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.1;
+    }
+    .sv {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: clamp(0.72rem, 3.6vw, 0.98rem);
+      color: var(--text-hi);
+      letter-spacing: 0.5px;
+    }
+    .sl {
+      font-size: clamp(0.35rem, 1.7vw, 0.48rem);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-lo);
+    }
+
+    /* Tier badge */
+    .tier-badge {
+      font-size: clamp(0.38rem, 1.6vw, 0.5rem);
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--frame);
+      opacity: 0.72;
+      margin-top: 3px;
+    }
+
+    /* ── DEBUG: nul alle glow/shadow-lag på kortområdet ──────────────────
+       Bekræftet synder: .card-frame { filter: drop-shadow(0 0 16px var(--frame-glow))
+         drop-shadow(0 0 32px var(--frame-glow)) }  ← gammel arkitektur-CSS
+         der matcher den nye SVG fordi den har class="card-frame".
+       --frame-glow arves fra [data-tier="gold"] → rgba(232,191,56,0.65).
+    ───────────────────────────────────────────────────────────────────── */
+    .card-frame {
+      filter: none !important;
+      box-shadow: none !important;
+    }
+    .card-wrapper,
+    .card-wrapper:hover,
+    .card-wrapper > * {
+      filter: none !important;
+      box-shadow: none !important;
+    }
+    .card-wrapper::before, .card-wrapper::after,
+    .card-frame::before,  .card-frame::after {
+      content: none !important;
+      display: none !important;
+      opacity: 0 !important;
+      background: none !important;
+      filter: none !important;
+    }
+    .player-card {
+      filter: none !important;
+      box-shadow: none !important;
+    }
+    /* ── /DEBUG ──────────────────────────────────────────────────────── */
+
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" onclick="window.location.href='index_fixed_28.html'">
+    <svg class="nav-logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="40" rx="10" fill="#1a1a1a"/>
+      <path d="M23 6L12 22H20L17 34L28 18H20L23 6Z" fill="#ff6a00"/>
+      <path d="M27 10L30 7L33 10M30 7V15" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="nav-logo-text">
+      <span class="nav-logo-top">Next <span style="color:#ff6a00">Level</span></span>
+      <span class="nav-logo-bottom">Academy</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <button class="nav-link" onclick="window.location.href='index_fixed_28.html'">Hjem</button>
+    <button class="nav-link active" onclick="window.location.href='index_fixed_28.html'">Quiz</button>
+    <button class="nav-link" onclick="window.location.href='index_fixed_28.html'">Stjernespillere</button>
+    <button class="nav-link" onclick="window.location.href='index_fixed_28.html'">Træning</button>
+    <button class="theme-toggle" id="theme-toggle">🌙 Nat</button>
+    <button class="nav-link" onclick="window.location.href='index_fixed_28.html'" style="border:1.5px solid #ff6a00;color:#ff8c00;">⭐ Premium</button>
+    <button class="nav-link" onclick="window.location.href='index_fixed_28.html'" style="border:0.5px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.45);">Log ind</button>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileNav(event)" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- REMOVE BEFORE LAUNCH: tier switcher -->
+  <button onclick="toggleTierMenu()" style="
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">🎨</button>
+
+  <!-- REMOVE BEFORE LAUNCH: tier menu popup -->
+  <div id="tier-menu" style="
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background: #1a1a2a;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 6px;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 100px;
+  ">
+    <button onclick="setPreviewTier('bronze')" style="background:transparent;border:none;color:#c8631a;cursor:pointer;padding:6px 10px;text-align:left;font-size:13px">★ Bronze</button>
+    <button onclick="setPreviewTier('silver')" style="background:transparent;border:none;color:#a8a8b8;cursor:pointer;padding:6px 10px;text-align:left;font-size:13px">★ Silver</button>
+    <button onclick="setPreviewTier('gold')"   style="background:transparent;border:none;color:#c9a800;cursor:pointer;padding:6px 10px;text-align:left;font-size:13px">★ Gold</button>
+    <button onclick="setPreviewTier('elite')"  style="background:transparent;border:none;color:#7b2fff;cursor:pointer;padding:6px 10px;text-align:left;font-size:13px">★ Elite</button>
+    <button onclick="setPreviewTier('legend')" style="background:transparent;border:none;color:#ffd700;cursor:pointer;padding:6px 10px;text-align:left;font-size:13px">👑 Legend</button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="nav-drawer">
+  <button class="nav-link" onclick="window.location.href='index_fixed_28.html';closeMobileNav()">🏠 Hjem</button>
+  <button class="nav-link active" onclick="window.location.href='index_fixed_28.html';closeMobileNav()">🧬 Quiz</button>
+  <button class="nav-link" onclick="window.location.href='index_fixed_28.html';closeMobileNav()">⭐ Stjernespillere</button>
+  <button class="nav-link" onclick="window.location.href='index_fixed_28.html';closeMobileNav()">📋 Træning</button>
+  <div style="height:0.5px;background:rgba(255,255,255,0.07);margin:4px 0"></div>
+  <button class="nav-link" onclick="window.location.href='index_fixed_28.html';closeMobileNav()" style="border:1.5px solid #ff6a00;color:#ff8c00;">⭐ Premium</button>
+  <div style="display:flex;gap:8px;">
+    <button class="theme-toggle" id="mob-theme-toggle" onclick="toggleTheme()" style="flex:1;padding:9px 12px;">🌙 Nat/Dag</button>
+    <button class="nav-link" onclick="window.location.href='index_fixed_28.html';closeMobileNav()" style="flex:1;border:0.5px solid rgba(255,255,255,0.1);">Log ind</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- TOP BAR -->
+  <div class="topbar"></div>
+
+  <div style="
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ff6a00;
+    text-transform: uppercase;
+    padding: 2px 0 0;
+    margin-bottom: 2px;
+  ">NEXT LEVEL ACADEMY</div>
+
+  <!-- ===== FOOTBALLIQ SPILLERKORT ===== -->
+  <section class="result-scene">
+    <div class="card-wrapper" id="playerCard" data-tier="gold">
+
+      <!-- LAG 1: Radial top-gloed bag SVG -->
+      <div class="card-bg-glow"></div>
+
+      <!-- LAG 2: SVG Kortramme -->
+      <svg class="card-frame" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="406" viewBox="0 0 304.5 305.25" height="407" preserveAspectRatio="xMidYMid meet"><defs><clipPath id="080f7021a4"><path d="M 0.125 0 L 303.878906 0 L 303.878906 304.5 L 0.125 304.5 Z M 0.125 0 " clip-rule="nonzero"/></clipPath><clipPath id="d6c7cda66a"><path d="M 7.761719 5.25 L 303.878906 5.25 L 303.878906 304.5 L 7.761719 304.5 Z M 7.761719 5.25 " clip-rule="nonzero"/></clipPath><clipPath id="723aa25702"><path d="M 280 9 L 303.878906 9 L 303.878906 304.5 L 280 304.5 Z M 280 9 " clip-rule="nonzero"/></clipPath><clipPath id="cca4515eeb"><path d="M 7.761719 10.875 L 20.292969 10.875 L 20.292969 304.5 L 7.761719 304.5 Z M 7.761719 10.875 " clip-rule="nonzero"/></clipPath><clipPath id="e07e505129"><path d="M 110 252 L 166 252 L 166 304.5 L 110 304.5 Z M 110 252 " clip-rule="nonzero"/></clipPath><clipPath id="899531c961"><path d="M 139 252 L 195 252 L 195 304.5 L 139 304.5 Z M 139 252 " clip-rule="nonzero"/></clipPath><clipPath id="721e6998c0"><path d="M 129 5.25 L 164 5.25 L 164 47 L 129 47 Z M 129 5.25 " clip-rule="nonzero"/></clipPath><clipPath id="3f2dbbbbd3"><path d="M 137 5.25 L 172 5.25 L 172 47 L 137 47 Z M 137 5.25 " clip-rule="nonzero"/></clipPath><clipPath id="a0eb6b025d"><path d="M 60 226 L 161 226 L 161 304.5 L 60 304.5 Z M 60 226 " clip-rule="nonzero"/></clipPath><clipPath id="686494bb4b"><path d="M 143 228 L 240 228 L 240 304.5 L 143 304.5 Z M 143 228 " clip-rule="nonzero"/></clipPath><clipPath id="e151f10fda"><path d="M 67 5.25 L 164 5.25 L 164 62 L 67 62 Z M 67 5.25 " clip-rule="nonzero"/></clipPath><clipPath id="8d4528caef"><path d="M 136 5.25 L 233 5.25 L 233 62 L 136 62 Z M 136 5.25 " clip-rule="nonzero"/></clipPath><clipPath id="0262bf7f5b"><path d="M 209.492188 171.59375 L 209.769531 171.59375 L 209.769531 171.851562 L 209.492188 171.851562 Z M 209.492188 171.59375 " clip-rule="nonzero"/></clipPath><clipPath id="ff296698a7"><path d="M 209.753906 171.78125 C 209.226562 171.960938 209.695312 171.609375 209.695312 171.609375 " clip-rule="nonzero"/></clipPath><clipPath id="dc32d14e33"><path d="M 209.753906 171.78125 C 209.226562 171.960938 209.695312 171.609375 209.695312 171.609375 " clip-rule="nonzero"/></clipPath><clipPath id="941d7e98e6"><path d="M 209.609375 171.945312 L 209.875 171.945312 L 209.875 172.207031 L 209.609375 172.207031 Z M 209.609375 171.945312 " clip-rule="nonzero"/></clipPath><clipPath id="fec8ea67e4"><path d="M 209.871094 172.136719 C 209.34375 172.3125 209.8125 171.960938 209.8125 171.960938 " clip-rule="nonzero"/></clipPath><clipPath id="84dbf39147"><path d="M 209.871094 172.136719 C 209.34375 172.3125 209.8125 171.960938 209.8125 171.960938 " clip-rule="nonzero"/></clipPath><clipPath id="91b1f17132"><path d="M 209.492188 171.59375 L 209.769531 171.59375 L 209.769531 171.851562 L 209.492188 171.851562 Z M 209.492188 171.59375 " clip-rule="nonzero"/></clipPath><clipPath id="63c751c5bb"><path d="M 209.753906 171.78125 C 209.226562 171.960938 209.695312 171.609375 209.695312 171.609375 " clip-rule="nonzero"/></clipPath><clipPath id="01d37cd970"><path d="M 209.753906 171.78125 C 209.226562 171.960938 209.695312 171.609375 209.695312 171.609375 " clip-rule="nonzero"/></clipPath><clipPath id="2ec22623b1"><path d="M 88.023438 171.316406 L 90.542969 171.316406 L 90.542969 173.839844 L 88.023438 173.839844 Z M 88.023438 171.316406 " clip-rule="nonzero"/></clipPath><clipPath id="8a70d64b2e"><path d="M 89.285156 171.316406 C 88.589844 171.316406 88.023438 171.878906 88.023438 172.574219 C 88.023438 173.273438 88.589844 173.839844 89.285156 173.839844 C 89.980469 173.839844 90.542969 173.273438 90.542969 172.574219 C 90.542969 171.878906 89.980469 171.316406 89.285156 171.316406 Z M 89.285156 171.316406 " clip-rule="nonzero"/></clipPath><clipPath id="823f4ba510"><path d="M 89.285156 171.316406 C 88.589844 171.316406 88.023438 171.878906 88.023438 172.574219 C 88.023438 173.273438 88.589844 173.839844 89.285156 173.839844 C 89.980469 173.839844 90.542969 173.273438 90.542969 172.574219 C 90.542969 171.878906 89.980469 171.316406 89.285156 171.316406 Z M 89.285156 171.316406 " clip-rule="nonzero"/></clipPath><clipPath id="e138a583ef"><path d="M 207.820312 170.667969 L 210.566406 170.667969 L 210.566406 173.421875 L 207.820312 173.421875 Z M 207.820312 170.667969 " clip-rule="nonzero"/></clipPath><clipPath id="708c6ccb82"><path d="M 209.195312 170.667969 C 208.4375 170.667969 207.820312 171.285156 207.820312 172.042969 C 207.820312 172.804688 208.4375 173.421875 209.195312 173.421875 C 209.953125 173.421875 210.566406 172.804688 210.566406 172.042969 C 210.566406 171.285156 209.953125 170.667969 209.195312 170.667969 Z M 209.195312 170.667969 " clip-rule="nonzero"/></clipPath><clipPath id="f2acf54987"><path d="M 209.195312 170.667969 C 208.4375 170.667969 207.820312 171.285156 207.820312 172.042969 C 207.820312 172.804688 208.4375 173.421875 209.195312 173.421875 C 209.953125 173.421875 210.566406 172.804688 210.566406 172.042969 C 210.566406 171.285156 209.953125 170.667969 209.195312 170.667969 Z M 209.195312 170.667969 " clip-rule="nonzero"/></clipPath><clipPath id="8e9f42523a"><path d="M 87.910156 142.863281 L 90.429688 142.863281 L 90.429688 145.386719 L 87.910156 145.386719 Z M 87.910156 142.863281 " clip-rule="nonzero"/></clipPath><clipPath id="d5aaa50d5e"><path d="M 89.167969 142.863281 C 88.472656 142.863281 87.910156 143.425781 87.910156 144.125 C 87.910156 144.824219 88.472656 145.386719 89.167969 145.386719 C 89.863281 145.386719 90.429688 144.824219 90.429688 144.125 C 90.429688 143.425781 89.863281 142.863281 89.167969 142.863281 Z M 89.167969 142.863281 " clip-rule="nonzero"/></clipPath><clipPath id="c0db540ec6"><path d="M 89.167969 142.863281 C 88.472656 142.863281 87.910156 143.425781 87.910156 144.125 C 87.910156 144.824219 88.472656 145.386719 89.167969 145.386719 C 89.863281 145.386719 90.429688 144.824219 90.429688 144.125 C 90.429688 143.425781 89.863281 142.863281 89.167969 142.863281 Z M 89.167969 142.863281 " clip-rule="nonzero"/></clipPath><clipPath id="22fdf37bfc"><path d="M 218.53125 138.113281 L 221.050781 138.113281 L 221.050781 140.640625 L 218.53125 140.640625 Z M 218.53125 138.113281 " clip-rule="nonzero"/></clipPath><clipPath id="2ade944497"><path d="M 219.792969 138.113281 C 219.097656 138.113281 218.53125 138.679688 218.53125 139.378906 C 218.53125 140.074219 219.097656 140.640625 219.792969 140.640625 C 220.488281 140.640625 221.050781 140.074219 221.050781 139.378906 C 221.050781 138.679688 220.488281 138.113281 219.792969 138.113281 Z M 219.792969 138.113281 " clip-rule="nonzero"/></clipPath><clipPath id="c551f7868b"><path d="M 219.792969 138.113281 C 219.097656 138.113281 218.53125 138.679688 218.53125 139.378906 C 218.53125 140.074219 219.097656 140.640625 219.792969 140.640625 C 220.488281 140.640625 221.050781 140.074219 221.050781 139.378906 C 221.050781 138.679688 220.488281 138.113281 219.792969 138.113281 Z M 219.792969 138.113281 " clip-rule="nonzero"/></clipPath><clipPath id="fbcae73ea1"><path d="M 122.3125 264.90625 L 124.832031 264.90625 L 124.832031 267.429688 L 122.3125 267.429688 Z M 122.3125 264.90625 " clip-rule="nonzero"/></clipPath><clipPath id="850771f41b"><path d="M 123.574219 264.90625 C 122.875 264.90625 122.3125 265.472656 122.3125 266.167969 C 122.3125 266.863281 122.875 267.429688 123.574219 267.429688 C 124.269531 267.429688 124.832031 266.863281 124.832031 266.167969 C 124.832031 265.472656 124.269531 264.90625 123.574219 264.90625 Z M 123.574219 264.90625 " clip-rule="nonzero"/></clipPath><clipPath id="92b964148e"><path d="M 123.574219 264.90625 C 122.875 264.90625 122.3125 265.472656 122.3125 266.167969 C 122.3125 266.863281 122.875 267.429688 123.574219 267.429688 C 124.269531 267.429688 124.832031 266.863281 124.832031 266.167969 C 124.832031 265.472656 124.269531 264.90625 123.574219 264.90625 Z M 123.574219 264.90625 " clip-rule="nonzero"/></clipPath><clipPath id="f4a7632789"><path d="M 179.777344 264.90625 L 182.292969 264.90625 L 182.292969 267.429688 L 179.777344 267.429688 Z M 179.777344 264.90625 " clip-rule="nonzero"/></clipPath><clipPath id="59e8087229"><path d="M 181.035156 264.90625 C 180.339844 264.90625 179.777344 265.472656 179.777344 266.167969 C 179.777344 266.863281 180.339844 267.429688 181.035156 267.429688 C 181.730469 267.429688 182.292969 266.863281 182.292969 266.167969 C 182.292969 265.472656 181.730469 264.90625 181.035156 264.90625 Z M 181.035156 264.90625 " clip-rule="nonzero"/></clipPath><clipPath id="aba887fe56"><path d="M 181.035156 264.90625 C 180.339844 264.90625 179.777344 265.472656 179.777344 266.167969 C 179.777344 266.863281 180.339844 267.429688 181.035156 267.429688 C 181.730469 267.429688 182.292969 266.863281 182.292969 266.167969 C 182.292969 265.472656 181.730469 264.90625 181.035156 264.90625 Z M 181.035156 264.90625 " clip-rule="nonzero"/></clipPath><clipPath id="1107ce2d91"><path d="M 141.40625 31.167969 L 143.921875 31.167969 L 143.921875 33.695312 L 141.40625 33.695312 Z M 141.40625 31.167969 " clip-rule="nonzero"/></clipPath><clipPath id="e6b6f61a77"><path d="M 142.664062 31.167969 C 141.964844 31.167969 141.40625 31.734375 141.40625 32.433594 C 141.40625 33.128906 141.964844 33.695312 142.664062 33.695312 C 143.359375 33.695312 143.921875 33.128906 143.921875 32.433594 C 143.921875 31.734375 143.359375 31.167969 142.664062 31.167969 Z M 142.664062 31.167969 " clip-rule="nonzero"/></clipPath><clipPath id="b7a6d39909"><path d="M 142.664062 31.167969 C 141.964844 31.167969 141.40625 31.734375 141.40625 32.433594 C 141.40625 33.128906 141.964844 33.695312 142.664062 33.695312 C 143.359375 33.695312 143.921875 33.128906 143.921875 32.433594 C 143.921875 31.734375 143.359375 31.167969 142.664062 31.167969 Z M 142.664062 31.167969 " clip-rule="nonzero"/></clipPath><clipPath id="bd7eb1785f"><path d="M 156.746094 31.167969 L 159.265625 31.167969 L 159.265625 33.695312 L 156.746094 33.695312 Z M 156.746094 31.167969 " clip-rule="nonzero"/></clipPath><clipPath id="7eb836db0f"><path d="M 158.007812 31.167969 C 157.3125 31.167969 156.746094 31.734375 156.746094 32.433594 C 156.746094 33.128906 157.3125 33.695312 158.007812 33.695312 C 158.703125 33.695312 159.265625 33.128906 159.265625 32.433594 C 159.265625 31.734375 158.703125 31.167969 158.007812 31.167969 Z M 158.007812 31.167969 " clip-rule="nonzero"/></clipPath><clipPath id="f815e9f54e"><path d="M 158.007812 31.167969 C 157.3125 31.167969 156.746094 31.734375 156.746094 32.433594 C 156.746094 33.128906 157.3125 33.695312 158.007812 33.695312 C 158.703125 33.695312 159.265625 33.128906 159.265625 32.433594 C 159.265625 31.734375 158.703125 31.167969 158.007812 31.167969 Z M 158.007812 31.167969 " clip-rule="nonzero"/></clipPath><clipPath id="d1b18e29d6"><path d="M 128.199219 25.75 L 130.71875 25.75 L 130.71875 28.277344 L 128.199219 28.277344 Z M 128.199219 25.75 " clip-rule="nonzero"/></clipPath><clipPath id="e020858ce3"><path d="M 129.457031 25.75 C 128.765625 25.75 128.199219 26.316406 128.199219 27.015625 C 128.199219 27.710938 128.765625 28.277344 129.457031 28.277344 C 130.152344 28.277344 130.71875 27.710938 130.71875 27.015625 C 130.71875 26.316406 130.152344 25.75 129.457031 25.75 Z M 129.457031 25.75 " clip-rule="nonzero"/></clipPath><clipPath id="0371ea5d5e"><path d="M 129.457031 25.75 C 128.765625 25.75 128.199219 26.316406 128.199219 27.015625 C 128.199219 27.710938 128.765625 28.277344 129.457031 28.277344 C 130.152344 28.277344 130.71875 27.710938 130.71875 27.015625 C 130.71875 26.316406 130.152344 25.75 129.457031 25.75 Z M 129.457031 25.75 " clip-rule="nonzero"/></clipPath><clipPath id="2930fdd5d9"><path d="M 169.132812 25.75 L 171.648438 25.75 L 171.648438 28.277344 L 169.132812 28.277344 Z M 169.132812 25.75 " clip-rule="nonzero"/></clipPath><clipPath id="40b4afab72"><path d="M 170.390625 25.75 C 169.695312 25.75 169.132812 26.316406 169.132812 27.015625 C 169.132812 27.710938 169.695312 28.277344 170.390625 28.277344 C 171.085938 28.277344 171.648438 27.710938 171.648438 27.015625 C 171.648438 26.316406 171.085938 25.75 170.390625 25.75 Z M 170.390625 25.75 " clip-rule="nonzero"/></clipPath><clipPath id="c2b04a5268"><path d="M 170.390625 25.75 C 169.695312 25.75 169.132812 26.316406 169.132812 27.015625 C 169.132812 27.710938 169.695312 28.277344 170.390625 28.277344 C 171.085938 28.277344 171.648438 27.710938 171.648438 27.015625 C 171.648438 26.316406 171.085938 25.75 170.390625 25.75 Z M 170.390625 25.75 " clip-rule="nonzero"/></clipPath><clipPath id="0b8184d2f8"><path d="M 151.261719 25.863281 L 153.78125 25.863281 L 153.78125 28.386719 L 151.261719 28.386719 Z M 151.261719 25.863281 " clip-rule="nonzero"/></clipPath><clipPath id="7925c5a6aa"><path d="M 152.523438 25.863281 C 151.828125 25.863281 151.261719 26.429688 151.261719 27.125 C 151.261719 27.820312 151.828125 28.386719 152.523438 28.386719 C 153.21875 28.386719 153.78125 27.820312 153.78125 27.125 C 153.78125 26.429688 153.21875 25.863281 152.523438 25.863281 Z M 152.523438 25.863281 " clip-rule="nonzero"/></clipPath><clipPath id="2b1fe8b14b"><path d="M 152.523438 25.863281 C 151.828125 25.863281 151.261719 26.429688 151.261719 27.125 C 151.261719 27.820312 151.828125 28.386719 152.523438 28.386719 C 153.21875 28.386719 153.78125 27.820312 153.78125 27.125 C 153.78125 26.429688 153.21875 25.863281 152.523438 25.863281 Z M 152.523438 25.863281 " clip-rule="nonzero"/></clipPath></defs><g clip-path="url(#080f7021a4)"></g><g clip-path="url(#d6c7cda66a)"></g><g clip-path="url(#723aa25702)"><g transform="matrix(0.575897, 0, 0, 0.577208, 279.837656, 8.596125)"></g></g><g clip-path="url(#cca4515eeb)"></g><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 218.707334, 139.916395)" fill="none" stroke-linejoin="miter" d="M -0.00268053 2.000501 L 137.318974 2.000501 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 78.582801, 139.916395)" fill="none" stroke-linejoin="miter" d="M -0.00268053 1.999702 L 137.318974 1.999702 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 78.583553, 240.494786)" fill="none" stroke-linejoin="miter" d="M -0.00222721 1.998419 L 109.600871 1.998419 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 218.708124, 240.494786)" fill="none" stroke-linejoin="miter" d="M -0.00222721 1.999152 L 109.600871 1.999152 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.00000000102213, -0.586954, 0.58564, 0.00000000102443, 88.051943, 171.91945)" fill="none" stroke-linejoin="miter" d="M -0.00413077 1.999033 L 48.385214 1.999033 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 208.021233, 171.91945)" fill="none" stroke-linejoin="miter" d="M -0.00413077 1.998111 L 48.385214 1.998111 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.35202, -0.469085, 0.468034, 0.35281, 201.659797, 261.91194)" fill="none" stroke-linejoin="miter" d="M 1.265395 1.544511 C 17.42673 14.794652 33.582449 14.795434 49.737872 1.542858 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.365261, 0.458803, -0.457775, 0.366081, 80.033476, 238.84664)" fill="none" stroke-linejoin="miter" d="M 1.282952 1.53199 C 17.139034 14.780948 32.981218 14.78394 48.832388 1.533625 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.574323, -0.114828, 0.114571, 0.575612, 180.806382, 265.016227)" fill="none" stroke-linejoin="miter" d="M -0.000787693 2.000742 C 13.425775 1.998616 26.852338 1.996491 40.277598 2.000891 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><g clip-path="url(#e07e505129)"><path stroke-linecap="butt" transform="matrix(0.390553, 0.437376, -0.436396, 0.39143, 124.418629, 265.388114)" fill="none" stroke-linejoin="miter" d="M 0.00232567 1.999703 L 73.6848 1.998719 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><g clip-path="url(#899531c961)"><path stroke-linecap="butt" transform="matrix(0.390052, -0.437825, 0.436844, 0.390928, 151.449349, 297.610856)" fill="none" stroke-linejoin="miter" d="M -0.000969131 2.00357 L 73.601493 1.999565 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><path stroke-linecap="butt" transform="matrix(0.567066, 0.146647, -0.146319, 0.568339, 166.972651, 281.145657)" fill="none" stroke-linejoin="miter" d="M -0.0010023 1.998348 L 25.313702 1.9959 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.548194, -0.206513, 0.20605, 0.549425, 123.134889, 284.895671)" fill="none" stroke-linejoin="miter" d="M 0.00121639 1.996211 L 25.095992 2.00112 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.4579, 0.365923, -0.365103, 0.458928, 90.468987, 258.060456)" fill="none" stroke-linejoin="miter" d="M 0.00162548 2.003404 L 73.829419 1.995597 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.43555, -0.392376, 0.391497, 0.436528, 180.251952, 285.119799)" fill="none" stroke-linejoin="miter" d="M 0.00102818 1.999394 L 76.807243 1.999787 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 77.40897, 83.173303)" fill="none" stroke-linejoin="miter" d="M 0.00243286 2.003042 L 9.106631 2.003042 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 77.40897, 90.854264)" fill="none" stroke-linejoin="miter" d="M -0.00205236 2.003042 L 9.108801 2.003042 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 77.40897, 98.535225)" fill="none" stroke-linejoin="miter" d="M 0.000117525 2.003042 L 9.110971 2.003042 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 219.885077, 83.173303)" fill="none" stroke-linejoin="miter" d="M 0.00243286 1.997151 L 9.106631 1.997151 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 219.885077, 90.854264)" fill="none" stroke-linejoin="miter" d="M -0.00205236 1.997151 L 9.108801 1.997151 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 219.885077, 98.535225)" fill="none" stroke-linejoin="miter" d="M 0.000117525 1.997151 L 9.110971 1.997151 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 77.40897, 203.703583)" fill="none" stroke-linejoin="miter" d="M 0.000779539 2.003042 L 9.111633 2.003042 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 77.40897, 211.398018)" fill="none" stroke-linejoin="miter" d="M -0.000715091 2.003042 L 9.110138 2.003042 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 77.40897, 219.092451)" fill="none" stroke-linejoin="miter" d="M -0.0022138 2.003042 L 9.108639 2.003042 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 219.876061, 203.703583)" fill="none" stroke-linejoin="miter" d="M 0.000779539 1.999206 L 9.111633 1.999206 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 219.885077, 211.398018)" fill="none" stroke-linejoin="miter" d="M -0.000715091 1.997151 L 9.110138 1.997151 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 219.894091, 219.092451)" fill="none" stroke-linejoin="miter" d="M -0.0022138 1.9951 L 9.108639 1.9951 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.523042, -0.264031, 0.26344, 0.524217, 79.020673, 176.377881)" fill="none" stroke-linejoin="miter" d="M -0.000624936 1.998668 L 19.91055 1.997442 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.523042, -0.264031, 0.26344, 0.524217, 209.160045, 143.585311)" fill="none" stroke-linejoin="miter" d="M 0.00159125 1.999024 L 19.909772 2.003742 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.544542, -0.216002, 0.215518, -0.545765, 219.581895, 177.44255)" fill="none" stroke-linejoin="miter" d="M 0.0040336 2.004569 L 19.908544 1.999933 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.544542, -0.216002, 0.215518, -0.545765, 89.30569, 145.21639)" fill="none" stroke-linejoin="miter" d="M -0.00255803 2.000757 L 19.910604 1.999855 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.00496296, 0.586933, -0.585619, -0.0049741, 84.902079, 141.830258)" fill="none" stroke-linejoin="miter" d="M 0.0000104236 2.000638 L 57.30929 2.001889 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.00496296, 0.586933, -0.585619, -0.0049741, 217.112231, 141.82032)" fill="none" stroke-linejoin="miter" d="M 0.00362013 1.999266 L 57.306245 2.000574 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.548288, 0.206261, -0.205799, -0.549519, 125.236393, 37.742278)" fill="none" stroke-linejoin="miter" d="M -0.000643876 2.004515 L 74.187882 1.999987 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.543546, 0.218507, -0.218017, 0.544766, 176.247008, 35.417548)" fill="none" stroke-linejoin="miter" d="M 0.00288309 2.000187 L 75.413883 2.00508 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.318703, 0.49243, -0.491327, -0.319418, 87.224785, 52.131994)" fill="none" stroke-linejoin="miter" d="M 0.75306 3.848826 C 6.838484 1.380248 12.924942 1.383574 19.008805 3.85321 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.256893, -0.52747, 0.526288, -0.25747, 218.321256, 61.57893)" fill="none" stroke-linejoin="miter" d="M 0.768474 3.587156 C 5.874791 1.470435 10.984534 1.470731 16.088798 3.59112 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.564349, -0.156824, 0.156473, -0.565616, 165.462871, 35.722435)" fill="none" stroke-linejoin="miter" d="M 0.00453253 2.001145 L 13.764077 1.998355 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.561717, 0.166044, -0.165672, -0.562978, 142.989773, 33.850799)" fill="none" stroke-linejoin="miter" d="M -0.00388456 2.002739 L 13.368068 2.005559 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.265395, 0.523225, -0.522052, -0.265991, 130.496437, 27.779841)" fill="none" stroke-linejoin="miter" d="M 0.0026368 1.99714 L 19.080668 2.003255 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.368272, 0.456378, -0.455356, 0.369099, 130.367832, 26.508524)" fill="none" stroke-linejoin="miter" d="M 0.00424747 2.00363 L 17.321892 2.000777 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.302229, -0.502755, 0.501628, -0.302908, 175.788685, 38.443731)" fill="none" stroke-linejoin="miter" d="M -0.000277263 1.994093 L 21.201397 1.99712 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.359938, -0.463009, 0.461972, 0.360746, 163.671872, 34.030329)" fill="none" stroke-linejoin="miter" d="M -0.000870052 2.004663 L 16.717379 2.000532 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><g clip-path="url(#721e6998c0)"><path stroke-linecap="butt" transform="matrix(0.243645, -0.533747, 0.532551, 0.244192, 141.595898, 32.523791)" fill="none" stroke-linejoin="miter" d="M 0.00010703 1.998365 L 32.980509 2.005039 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><g clip-path="url(#3f2dbbbbd3)"><path stroke-linecap="butt" transform="matrix(-0.232014, -0.538927, 0.53772, -0.232535, 157.071244, 33.185169)" fill="none" stroke-linejoin="miter" d="M -0.00254262 1.994899 L 32.118755 2.001166 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 72.308794, 240.492479)" fill="none" stroke-linejoin="miter" d="M 0.000495863 2.000676 L 310.514877 2.000676 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0, -0.586954, 0.58564, 0, 225.165842, 242.05409)" fill="none" stroke-linejoin="miter" d="M -0.00101865 2.004649 L 310.513362 2.004649 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><g clip-path="url(#a0eb6b025d)"><path stroke-linecap="butt" transform="matrix(-0.475312, -0.342897, 0.342129, -0.476379, 138.838411, 305.417456)" fill="none" stroke-linejoin="miter" d="M 0.757206 25.980498 C 78.813365 -5.990037 130.609041 -5.995882 156.150483 25.983065 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><g clip-path="url(#686494bb4b)"><path stroke-linecap="butt" transform="matrix(0.472412, -0.346899, 0.346122, 0.473473, 155.30982, 292.219737)" fill="none" stroke-linejoin="miter" d="M 0.847976 1.807233 C 70.97027 34.587717 120.359191 34.58804 149.029434 1.810716 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><g clip-path="url(#e151f10fda)"><path stroke-linecap="butt" transform="matrix(-0.541999, 0.222334, -0.221835, -0.543216, 151.142617, 20.131628)" fill="none" stroke-linejoin="miter" d="M 0.000651768 1.997178 L 129.329305 2.004721 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><g clip-path="url(#8d4528caef)"><path stroke-linecap="butt" transform="matrix(-0.54085, -0.225126, 0.224622, -0.542064, 218.987223, 48.838655)" fill="none" stroke-linejoin="miter" d="M -0.00122375 2.001654 L 127.971924 1.998869 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/></g><path stroke-linecap="butt" transform="matrix(-0.336534, 0.480366, -0.47929, -0.337289, 82.867642, 47.433976)" fill="none" stroke-linejoin="miter" d="M 1.062237 1.757173 C 8.648267 6.504137 16.76315 6.503171 25.406887 1.754275 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(-0.300876, -0.503569, 0.502441, -0.301552, 225.795451, 61.103044)" fill="none" stroke-linejoin="miter" d="M 1.043365 1.708293 C 10.136569 7.26241 18.531565 7.259443 26.215788 1.707416 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><path stroke-linecap="butt" transform="matrix(0.578712, 0.0900124, -0.0898108, 0.580011, 95.840161, 260.705821)" fill="none" stroke-linejoin="miter" d="M -0.000295305 2.002362 C 15.935995 2.000863 31.865695 2.000386 47.795394 1.999909 " stroke="var(--frame, #f16800)" stroke-width="4" stroke-opacity="1" stroke-miterlimit="4"/><g clip-path="url(#0262bf7f5b)"><g clip-path="url(#ff296698a7)"><g clip-path="url(#dc32d14e33)"></g></g></g><g clip-path="url(#941d7e98e6)"><g clip-path="url(#fec8ea67e4)"><g clip-path="url(#84dbf39147)"></g></g></g><g clip-path="url(#91b1f17132)"><g clip-path="url(#63c751c5bb)"><g clip-path="url(#01d37cd970)"></g></g></g><g clip-path="url(#2ec22623b1)"><g clip-path="url(#8a70d64b2e)"><g clip-path="url(#823f4ba510)"></g></g></g><g clip-path="url(#e138a583ef)"><g clip-path="url(#708c6ccb82)"><g clip-path="url(#f2acf54987)"></g></g></g><g clip-path="url(#8e9f42523a)"><g clip-path="url(#d5aaa50d5e)"><g clip-path="url(#c0db540ec6)"></g></g></g><g clip-path="url(#22fdf37bfc)"><g clip-path="url(#2ade944497)"><g clip-path="url(#c551f7868b)"></g></g></g><g clip-path="url(#fbcae73ea1)"><g clip-path="url(#850771f41b)"><g clip-path="url(#92b964148e)"></g></g></g><g clip-path="url(#f4a7632789)"><g clip-path="url(#59e8087229)"><g clip-path="url(#aba887fe56)"></g></g></g><g clip-path="url(#1107ce2d91)"><g clip-path="url(#e6b6f61a77)"><g clip-path="url(#b7a6d39909)"></g></g></g><g clip-path="url(#bd7eb1785f)"><g clip-path="url(#7eb836db0f)"><g clip-path="url(#f815e9f54e)"></g></g></g><g clip-path="url(#d1b18e29d6)"><g clip-path="url(#e020858ce3)"><g clip-path="url(#0371ea5d5e)"></g></g></g><g clip-path="url(#2930fdd5d9)"><g clip-path="url(#40b4afab72)"><g clip-path="url(#c2b04a5268)"></g></g></g><path stroke-linecap="butt" transform="matrix(0.58564, 0, 0, 0.586954, 98.021015, 173.419925)" fill="none" stroke-linejoin="miter" d="M -0.00253381 0.502455 L 173.118817 0.502455 " stroke="var(--frame, #f16800)" stroke-width="1" stroke-opacity="1" stroke-miterlimit="4"/><g clip-path="url(#0b8184d2f8)"><g clip-path="url(#7925c5a6aa)"><g clip-path="url(#2b1fe8b14b)"></g></g></g></svg>
+
+      <!-- LAG 3: Dynamisk kortindhold -->
+      <div class="card-content">
+
+        <!-- Venstre top: OVR + position -->
+        <div class="card-meta">
+          <div class="card-ovr" id="cardOvr">75</div>
+          <div class="card-pos" id="cardPos">MID</div>
+        </div>
+
+        <!-- Center: Spillerbillede / fallback-silhuet -->
+        <div class="card-player-zone">
+          <div class="card-player-img-wrap">
+            <img id="cardPlayerImg"
+                 src="assets/Card/silhouette.png"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+                 alt="Spiller"
+                 class="card-player-img" />
+            <!-- CSS-silhuet fallback hvis billede mangler -->
+            <svg class="card-player-fallback" style="display:none"
+                 viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="50" cy="22" rx="15" ry="17" fill="currentColor" opacity="0.38"/>
+              <path d="M28 130 Q32 68 50 60 Q68 68 72 130Z" fill="currentColor" opacity="0.32"/>
+              <path d="M34 88 L18 110 M66 88 L82 110"
+                    stroke="currentColor" stroke-width="7"
+                    stroke-linecap="round" opacity="0.28"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Bund: navn, tagline, stats, tier-badge -->
+        <div class="card-lower">
+
+          <div class="card-name-wrap">
+            <div class="card-name"    id="cardName">SPILLERNAVN</div>
+            <div class="card-tagline" id="cardTagline">Din spillertype</div>
+          </div>
+
+          <!-- Stats 2 raekker x 3 kolonner -->
+          <div class="card-stats" id="cardStats">
+            <div class="stat"><span class="sv" id="s1v">&#x2014;</span><span class="sl" id="s1l">PAS</span></div>
+            <div class="stat"><span class="sv" id="s2v">&#x2014;</span><span class="sl" id="s2l">DRI</span></div>
+            <div class="stat"><span class="sv" id="s3v">&#x2014;</span><span class="sl" id="s3l">SHO</span></div>
+            <div class="stat"><span class="sv" id="s4v">&#x2014;</span><span class="sl" id="s4l">VIS</span></div>
+            <div class="stat"><span class="sv" id="s5v">&#x2014;</span><span class="sl" id="s5l">FYS</span></div>
+            <div class="stat"><span class="sv" id="s6v">&#x2014;</span><span class="sl" id="s6l">DEF</span></div>
+          </div>
+
+          <div class="tier-badge" id="tierBadge">GOLD</div>
+
+        </div>
+      </div><!-- /card-content -->
+    </div><!-- /card-wrapper -->
+  </section>
+  <!-- ===== /FOOTBALLIQ SPILLERKORT ===== -->
+
+
+  <!-- PROGRESSION -->
+  <div class="level-section">
+    <p class="level-section-label">DIT NIVEAU</p>
+    <div class="level-progression">
+      <div class="level-track"><div class="level-track-fill" id="level-track-fill"></div></div>
+      <div class="level-steps">
+
+        <div class="level-step" data-level="rookie">
+          <div class="shield-wrap">
+            <svg width="34" height="40" viewBox="0 0 40 47" fill="none">
+              <path d="M20,2 L38,8 L38,24 Q38,38 20,45 Q2,38 2,24 L2,8 Z" fill="#1a0800" stroke="#FF6B1A" stroke-width="2"/>
+              <text x="20" y="30" text-anchor="middle" font-size="11" fill="#FF6B1A" font-family="sans-serif" font-weight="bold">★★</text>
+            </svg>
+          </div>
+          <span class="step-name">Rookie</span>
+          <span class="step-desc">Quiz gennemført</span>
+        </div>
+
+        <div class="level-step" data-level="semi-pro">
+          <div class="shield-wrap">
+            <svg width="34" height="40" viewBox="0 0 40 47" fill="none">
+              <path d="M20,2 L38,8 L38,24 Q38,38 20,45 Q2,38 2,24 L2,8 Z" fill="#161616" stroke="#9ca3af" stroke-width="2"/>
+              <circle cx="20" cy="26" r="9" fill="none" stroke="#9ca3af" stroke-width="1.5"/>
+              <circle cx="20" cy="26" r="4" fill="#9ca3af"/>
+            </svg>
+          </div>
+          <span class="step-name">Semi-Pro</span>
+          <span class="step-desc">Avanceret quiz</span>
+        </div>
+
+        <div class="level-step" data-level="academy">
+          <div class="shield-wrap">
+            <svg width="34" height="40" viewBox="0 0 40 47" fill="none">
+              <path d="M20,2 L38,8 L38,24 Q38,38 20,45 Q2,38 2,24 L2,8 Z" fill="#1a1400" stroke="#FFD700" stroke-width="2"/>
+              <text x="20" y="33" text-anchor="middle" font-size="17" fill="#FFD700" font-family="sans-serif">★</text>
+            </svg>
+          </div>
+          <span class="step-name">Academy Star</span>
+          <span class="step-desc">Træningsplan</span>
+        </div>
+
+        <div class="level-step" data-level="elite">
+          <div class="shield-wrap">
+            <svg width="34" height="40" viewBox="0 0 40 47" fill="none">
+              <path d="M20,2 L38,8 L38,24 Q38,38 20,45 Q2,38 2,24 L2,8 Z" fill="#080a1a" stroke="#3B82F6" stroke-width="2"/>
+              <polygon points="20,14 29,26 20,38 11,26" fill="rgba(59,130,246,0.28)" stroke="#3B82F6" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="step-name">Elite</span>
+          <span class="step-desc">Dim. over 80</span>
+        </div>
+
+        <div class="level-step" data-level="legend">
+          <div class="shield-wrap">
+            <svg width="34" height="40" viewBox="0 0 40 47" fill="none">
+              <path d="M20,2 L38,8 L38,24 Q38,38 20,45 Q2,38 2,24 L2,8 Z" fill="#0d0814" stroke="#8B5CF6" stroke-width="2"/>
+              <polygon points="10,32 10,22 15,27 20,18 25,27 30,22 30,32" fill="#8B5CF6"/>
+              <rect x="9" y="32" width="22" height="4" rx="1" fill="#8B5CF6"/>
+            </svg>
+          </div>
+          <span class="step-name">Legend</span>
+          <span class="step-desc">Alle dim. over 90</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM SECTION -->
+  <div class="bottom-section">
+    <p class="type-label">Din spillertype</p>
+    <div class="type-row">
+      <span class="type-emoji" id="bottom-emoji">💥</span>
+      <span class="type-name" id="bottom-name">Bulldozeren</span>
+    </div>
+    <p class="type-desc" id="player-desc"></p>
+
+    <div class="rolemodel-row">
+      <div class="rolemodel-avatars" id="rolemodel-avatars">
+        <div class="rolemodel-avatar">
+          <svg viewBox="0 0 40 50" width="38" height="48" style="filter:blur(1.5px)"><circle cx="20" cy="11" r="8" fill="rgba(140,70,200,0.75)"/><path d="M6,42 Q6,26 20,26 Q34,26 34,42" fill="rgba(140,70,200,0.75)"/></svg>
+          <span class="avatar-lock">🔒</span>
+        </div>
+        <div class="rolemodel-avatar">
+          <svg viewBox="0 0 40 50" width="38" height="48" style="filter:blur(1.5px)"><circle cx="20" cy="11" r="8" fill="rgba(140,70,200,0.75)"/><path d="M6,42 Q6,26 20,26 Q34,26 34,42" fill="rgba(140,70,200,0.75)"/></svg>
+          <span class="avatar-lock">🔒</span>
+        </div>
+        <div class="rolemodel-avatar">
+          <svg viewBox="0 0 40 50" width="38" height="48" style="filter:blur(1.5px)"><circle cx="20" cy="11" r="8" fill="rgba(140,70,200,0.75)"/><path d="M6,42 Q6,26 20,26 Q34,26 34,42" fill="rgba(140,70,200,0.75)"/></svg>
+          <span class="avatar-lock">🔒</span>
+        </div>
+      </div>
+      <span class="rolemodel-text">
+        Dine rollemodeller er låst — lås op med avanceret quiz
+        <button class="rolemodel-unlock" onclick="window.location.href='index_fixed_28.html'"> Lås op →</button>
+      </span>
+    </div>
+
+    <div class="cta-stack">
+      <button class="btn-primary" onclick="window.location.href='index_fixed_28.html'">Start dagens udfordring →</button>
+      <button class="btn-secondary" onclick="window.location.href='index_fixed_28.html'">🔒 Tag avanceret test &amp; lås op for rollemodeller →</button>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- DNA SECTION -->
+  <div class="dna-section">
+    <p class="section-label">🧬 Din DNA-profil</p>
+    <p class="section-sub">Se hvordan dine egenskaber former din spillestil.</p>
+    <div id="radar-svg-wrap"></div>
+    <div class="dna-grid" id="dna-grid"></div>
+    <div class="identity-wrap">
+      <p class="identity-words" id="identity-words">FYSIK. VÅBEN. STYRKE.</p>
+      <p class="identity-text" id="identity-text"></p>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge-section">
+    <h2 class="challenge-title">Din første udfordring er klar</h2>
+    <div class="challenge-card">
+      <p class="challenge-card-text" id="challenge-text">Vind 10 dueller i træning eller kamp denne uge.</p>
+      <p class="challenge-card-sub" id="challenge-sub">Personlig udfordring · Bulldozeren · 7 dage</p>
+    </div>
+    <div class="xp-row">
+      <span class="xp-badge">+150 XP</span>
+      <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+      <span class="progress-label">0 / 10</span>
+    </div>
+    <p class="xp-note">500 XP giver kortopgradering</p>
+    <button class="btn-green" onclick="window.location.href='index_fixed_28.html'">Start udfordring →</button>
+    <div class="login-hint">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      Log ind for at gemme dine fremskridt
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- PREMIUM -->
+  <div class="premium-section">
+    <h2 class="premium-title">Vil du udvikle dig hurtigere?</h2>
+    <p class="premium-sub">Få adgang til avancerede analyser, personlige træningsplaner og professionelle værktøjer.</p>
+    <div class="features-grid">
+      <div class="feature-item"><span class="feature-check">✓</span>Personlig træningsplan</div>
+      <div class="feature-item"><span class="feature-check">✓</span>Avanceret DNA-analyse</div>
+      <div class="feature-item highlight"><span class="feature-check">✓</span>Rollemodeller</div>
+      <div class="feature-item"><span class="feature-check">✓</span>Spillersammenligninger</div>
+      <div class="feature-item"><span class="feature-check">✓</span>Ugentlige udfordringer</div>
+      <div class="feature-item"><span class="feature-check">✓</span>Ingen reklamer</div>
+    </div>
+    <p class="premium-price">29 kr<span> / md</span></p>
+    <button class="btn-purple" onclick="window.location.href='index_fixed_28.html'">Lås op for Premium — 29 kr/md →</button>
+    <button class="btn-outlined-dark">Se hvad der er inkluderet</button>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="actions-row">
+    <button class="btn-action" onclick="alert('Del dit kort')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+      Del dit kort
+    </button>
+    <button class="btn-action" onclick="window.location.href='index_fixed_28.html'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      Avanceret quiz
+    </button>
+    <button class="btn-action" onclick="window.location.href='index_fixed_28.html'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+      Se Premium
+    </button>
+  </div>
+
+</div>
+
+<script>
+  // REMOVE BEFORE LAUNCH
+  window.toggleTierMenu = function() {
+    const menu = document.getElementById('tier-menu');
+    menu.style.display =
+      menu.style.display === 'none' ? 'flex' : 'none';
+  };
+
+  // REMOVE BEFORE LAUNCH
+  window.setPreviewTier = function(tier) {
+    var badges = { bronze:'★ BRONZE', silver:'★ SILVER', gold:'★ GOLD', elite:'★ ELITE', legend:'👑 LEGEND' };
+    if (!badges[tier]) return;
+
+    // Set data-tier — all colors are driven by CSS variables on [data-tier]
+    var card = document.querySelector('.player-card');
+    if (card) card.setAttribute('data-tier', tier);
+    document.getElementById('playerCard')?.setAttribute('data-tier', tier);
+
+    // Update badge text
+    var badge = document.querySelector('.card-tier-badge');
+    if (badge) badge.textContent = badges[tier];
+
+    // Clear any residual dynamic style injection from old architecture
+    var oldStyle = document.getElementById('dynamic-tier');
+    if (oldStyle) oldStyle.textContent = '';
+
+    var menu = document.getElementById('tier-menu');
+    if (menu) menu.style.display = 'none';
+  };
+
+  // ── PLAYER TYPE DATA ──────────────────────────────────────────────────────────
+  var PLAYER_TYPES = {
+    angriber: {
+      name:'Den Pure Angriber', emoji:'⚡', pos:'ST/CF',
+      longDesc:'Din kampinstinkt og beslutningsevne er uovertruffen. Når bolden kommer mod dig i feltet, er alt andet irrelevant. Du er ikke her for at spille flot fodbold — du er her for at score.',
+      pros:['Erling Haaland','Harry Kane','Ronaldo (R9)'],
+      weights:{vision:0.10,beslut:0.28,kreativ:0.12,kamp:0.30,fysik:0.12,hold:0.08}
+    },
+    kantspiller: {
+      name:'Lommeraketten', emoji:'🌪️', pos:'LW/RW',
+      longDesc:'Din kreativitet og eksplosive fart er dit vigtigste våben. Du finder løsninger ingen andre ser, og du har modet til at prøve det umulige.',
+      pros:['Vinícius Jr.','Lamine Yamal','Arjen Robben'],
+      weights:{vision:0.12,beslut:0.18,kreativ:0.28,kamp:0.22,fysik:0.12,hold:0.08}
+    },
+    dirigent: {
+      name:'Den Kreative Dirigent', emoji:'🎯', pos:'CAM/10',
+      longDesc:'Din kombination af vision, kreativitet og holdmentalitet gør dig til holdets hjerne. Du er ikke bare en playmaker — du er den der bestemmer kampens rytme.',
+      pros:['Kevin De Bruyne','Pedri','Martin Ødegaard'],
+      weights:{vision:0.28,beslut:0.15,kreativ:0.25,kamp:0.12,fysik:0.08,hold:0.12}
+    },
+    maskinrum: {
+      name:'Maskinrummet', emoji:'🫀', pos:'CM/B2B',
+      longDesc:"Din kombination af kampinstinkt, holdmentalitet og udholdenhed gør dig uundværlig. Du er den der aldrig stopper, den der altid er der.",
+      pros:['Jude Bellingham',"N'Golo Kanté",'Steven Gerrard'],
+      weights:{vision:0.15,beslut:0.14,kreativ:0.10,kamp:0.24,fysik:0.20,hold:0.17}
+    },
+    ørn: {
+      name:'Den Taktiske Ørn', emoji:'🦅', pos:'CDM/DM',
+      longDesc:'Din vision og holdmentalitet kombineret med kampinstinkt gør dig til holdets filter. Du ser faren inden den opstår og handler.',
+      pros:['Rodri','Casemiro','Andrea Pirlo'],
+      weights:{vision:0.25,beslut:0.12,kreativ:0.08,kamp:0.22,fysik:0.15,hold:0.18}
+    },
+    mur: {
+      name:'Muren', emoji:'🏰', pos:'CB',
+      longDesc:'Din holdmentalitet og fysiske dominans kombineret med vision gør dig til en naturlig leder i forsvaret. Du ejer dit rum.',
+      pros:['Virgil van Dijk','Franco Baresi','Paolo Maldini'],
+      weights:{vision:0.18,beslut:0.10,kreativ:0.05,kamp:0.22,fysik:0.25,hold:0.20}
+    },
+    buldozer: {
+      name:'Bulldozeren', emoji:'💥', pos:'ST/CF/CB',
+      longDesc:'Din fysiske dominans og kampinstinkt er din absolutte styrke. Du bruger kroppen som et våben og skaber plads til andre.',
+      pros:['Romelu Lukaku','Zlatan Ibrahimović','Didier Drogba'],
+      weights:{vision:0.08,beslut:0.18,kreativ:0.08,kamp:0.28,fysik:0.28,hold:0.10}
+    },
+    keeper: {
+      name:'Den Urokkeligt Rolige', emoji:'🧤', pos:'GK',
+      longDesc:'Din kombination af beslutningsmod, holdmentalitet og vision gør dig til mere end en keeper — du er fundament og leder.',
+      pros:['Thibaut Courtois','Manuel Neuer','Marc-André ter Stegen'],
+      weights:{vision:0.20,beslut:0.22,kreativ:0.06,kamp:0.20,fysik:0.18,hold:0.14}
+    },
+    unikat: {
+      name:'Unikaten', emoji:'🔮', pos:'Overalt',
+      longDesc:"Din sjældne kombination af alle seks dimensioner på højt niveau gør dig til en spiller der aldrig er forudsigelig. Du er svær at categorisere — og det er din styrke.",
+      pros:['Lionel Messi','Kylian Mbappé','Phil Foden'],
+      weights:{vision:0.17,beslut:0.17,kreativ:0.17,kamp:0.17,fysik:0.15,hold:0.17}
+    },
+    sjæl: {
+      name:'Sjælen i Garderoben', emoji:'❤️', pos:'Alle positioner',
+      longDesc:'Din holdmentalitet er din absolutte superpower. Du er den der holder garderobe og hold samlet, den der trøster og motiverer. Din værdi er immateriel — og derfor umistelig.',
+      pros:["N'Golo Kanté",'Luka Modrić','Xavi Hernández'],
+      weights:{vision:0.15,beslut:0.12,kreativ:0.10,kamp:0.20,fysik:0.10,hold:0.33}
+    }
+  };
+
+  var IDENTITY_MAP = {
+    angriber:    { words:'INSTINKT. FART. MÅL.',                   text:'Du lever for det afgørende øjeblik. Din kombination af hurtighed og kampinstinkt gør dig farlig i enhver situation.' },
+    kantspiller: { words:'FLAIR. FART. FRIHED.',                   text:'Du er svær at læse og endnu sværere at stoppe. Din kreativitet og hurtighed gør dig til holdets joker.' },
+    dirigent:    { words:'VISION. KONTROL. KLASSE.',                text:'Du ser spillet før det sker. Din evne til at fordele bolden og læse banen gør dig uundværlig.' },
+    maskinrum:   { words:'ARBEJDE. VILJE. HOLD.',                  text:'Du er motoren der aldrig stopper. Din indsats og holdmentalitet løfter alle omkring dig.' },
+    ørn:         { words:'OVERBLIK. PRÆCISION. TAKT.',             text:'Du læser spillet bedre end nogen. Din taktiske forståelse og ro på bolden sætter standarden.' },
+    mur:         { words:'STYRKE. RO. KONTROL.',                   text:'Du er det fundament holdet bygger på. Din fysik og defensive sans stopper selv de bedste angribere.' },
+    buldozer:    { words:'FYSIK. VÅBEN. STYRKE.',                   text:'Du bestemmer kampens tempo. Din fysiske styrke og kampvilje gør dig svær at stoppe — og endnu sværere at ignorere.' },
+    keeper:      { words:'RO. MOD. LEDERSKAB.',                    text:'Du er holdets sidste skanse og første leder. Din ro under pres og beslutningsevne redder holdet igen og igen.' },
+    unikat:      { words:'ALSIDIGHED. INTELLIGENS. TILPASNING.',   text:'Du passer ikke i én boks — og det er din styrke. Du kan alt og overrasker altid.' },
+    sjæl:        { words:'HJERTE. FÆLLESSKAB. PASSION.',           text:'Fodbold er mere end stats for dig. Du binder holdet sammen og løfter alle omkring dig med din energi.' }
+  };
+
+  var CHALLENGE_MAP = {
+    angriber:    'Score 5 mål i træning eller kamp denne uge.',
+    kantspiller: 'Gennemfør 15 vellykkede driblinger i kamp eller træning.',
+    dirigent:    'Lav 20 nøgleafleveringer der skaber chancer.',
+    maskinrum:   'Løb flest kilometer på holdet i din næste kamp.',
+    ørn:         'Afbryd 10 afleveringer fra modstanderholdet.',
+    mur:         'Hold clean sheet i 3 på hinanden følgende træningsspil.',
+    buldozer:    'Vind 10 dueller i træning eller kamp denne uge.',
+    keeper:      'Red 5 vanskelige skud i din næste træning.',
+    unikat:      'Spil på 3 forskellige positioner i én træningssession.',
+    sjæl:        'Opmuntr og motiver 5 holdkammerater aktivt i næste kamp.'
+  };
+
+  // ── SESSION DATA ──────────────────────────────────────────────────────────────
+  var stored = sessionStorage.getItem('fiq_quiz_result');
+  var qData  = stored ? JSON.parse(stored) : null;
+  var TYPE   = (qData && PLAYER_TYPES[qData.type]) ? qData.type : 'buldozer';
+  var SC     = qData ? qData.scores : { vision:55, beslut:82, kreativ:50, kamp:91, fysik:96, hold:65 };
+
+  function calcOVR(type) {
+    var w = PLAYER_TYPES[type].weights, o = 0;
+    ['vision','beslut','kreativ','kamp','fysik','hold'].forEach(function(d){ o += SC[d] * w[d]; });
+    return Math.round(o);
+  }
+  var OVR = calcOVR(TYPE);
+
+  var LEVEL_ORDER  = ['rookie','semi-pro','academy','elite','legend'];
+  var LEVEL_LABELS = { rookie:'Rookie', 'semi-pro':'Semi-Pro', academy:'Academy Star', elite:'Elite', legend:'Legend' };
+
+  function getLevel(ovr) {
+    if (ovr >= 85) return 'legend';
+    if (ovr >= 78) return 'elite';
+    if (ovr >= 70) return 'academy';
+    if (ovr >= 62) return 'semi-pro';
+    return 'rookie';
+  }
+  var LEVEL = getLevel(OVR);
+
+  function getTier(ovr) {
+    if (ovr >= 90) return 'legend';
+    if (ovr >= 84) return 'elite';
+    if (ovr >= 75) return 'gold';
+    if (ovr >= 65) return 'silver';
+    return 'bronze';
+  }
+  var TIER = getTier(OVR);
+  var TIER_BADGES = { bronze:'★ BRONZE', silver:'★ SILVER', gold:'★ GOLD', elite:'★ ELITE', legend:'👑 LEGEND' };
+
+  var CARD_STATS = [
+    { lbl:'PAC', val: Math.round(SC.kamp*0.7  + SC.fysik*0.3)  },
+    { lbl:'SHO', val: Math.round(SC.beslut*0.6 + SC.kamp*0.4)  },
+    { lbl:'PAS', val: Math.round(SC.vision*0.6 + SC.hold*0.4)  },
+    { lbl:'DRI', val: Math.round(SC.kreativ*0.7 + SC.beslut*0.3) },
+    { lbl:'DEF', val: Math.round(SC.hold*0.5  + SC.fysik*0.3 + SC.vision*0.2) },
+    { lbl:'PHY', val: Math.round(SC.fysik*0.8 + SC.kamp*0.2)  },
+  ];
+
+  var tp        = PLAYER_TYPES[TYPE];
+  var identity  = IDENTITY_MAP[TYPE]  || { words:'FYSIK. VÅBEN. STYRKE.', text:'' };
+  var challenge = CHALLENGE_MAP[TYPE] || 'Sæt et personligt mål og nå det i denne uge.';
+
+  // All tier visuals applied via setPreviewTier — no static CSS classes needed
+
+  var _g; // null-guard: old card elements removed, new card uses initCard()
+  if ((_g = document.getElementById('card-ovr')))        _g.textContent = OVR;
+  if ((_g = document.getElementById('card-pos')))        _g.textContent = tp.pos;
+  if ((_g = document.getElementById('card-emoji')))      _g.textContent = tp.emoji;
+  if ((_g = document.getElementById('card-name')))       _g.textContent = tp.name.toUpperCase();
+  if ((_g = document.getElementById('card-tagline')))    _g.textContent = identity.words;
+  if ((_g = document.getElementById('card-stats-grid'))) _g.innerHTML = CARD_STATS.map(function(s) {
+    return '<div><div class="card-stat-lbl">' + s.lbl + '</div><div class="card-stat-val">' + s.val + '</div></div>';
+  }).join('');
+
+  // Apply all tier visuals via inline styles (no CSS class dependency)
+  setPreviewTier(TIER);
+
+  // Level progression
+  var levelIdx  = LEVEL_ORDER.indexOf(LEVEL);
+  var fillPct   = levelIdx >= 0 ? (levelIdx / (LEVEL_ORDER.length - 1)) * 100 : 0;
+  var trackFill = document.getElementById('level-track-fill');
+  if (trackFill) trackFill.style.width = fillPct + '%';
+  document.querySelectorAll('.level-step').forEach(function(el) {
+    if (el.getAttribute('data-level') === LEVEL) el.classList.add('active');
+  });
+
+  // Bottom section
+  document.getElementById('bottom-emoji').textContent = tp.emoji;
+  document.getElementById('bottom-name').textContent  = tp.name;
+
+  // Role model avatars
+  var raEl = document.getElementById('rolemodel-avatars');
+  var avatarSVG = '<svg viewBox="0 0 40 50" width="38" height="48" style="filter:blur(1.5px)"><circle cx="20" cy="11" r="8" fill="rgba(140,70,200,0.75)"/><path d="M6,42 Q6,26 20,26 Q34,26 34,42" fill="rgba(140,70,200,0.75)"/></svg>';
+  raEl.innerHTML = tp.pros.map(function() {
+    return '<div class="rolemodel-avatar">' + avatarSVG + '<span class="avatar-lock">🔒</span></div>';
+  }).join('');
+
+  // DNA grid
+  var DNA_META = [
+    { key:'fysik',   color:'#FF6B1A', name:'Fysisk dominans',  hint:'Din krop er dit våben.' },
+    { key:'kamp',    color:'#EF4444', name:'Kampinstinkt',      hint:'Du mærker kampen i kroppen.' },
+    { key:'beslut',  color:'#3B82F6', name:'Beslutningsmod',    hint:'Du handler hurtigt og præcist.' },
+    { key:'hold',    color:'#10B981', name:'Holdmentalitet',    hint:'Du løfter dem omkring dig.' },
+    { key:'vision',  color:'#8B5CF6', name:'Spilforståelse',    hint:'Du ser spillet som et skakbræt.' },
+    { key:'kreativ', color:'#F59E0B', name:'Kreativitet',       hint:'Du finder løsninger ingen andre ser.' },
+  ];
+  document.getElementById('dna-grid').innerHTML = DNA_META.map(function(d) {
+    return '<div class="dna-card"><span class="dna-val" style="color:' + d.color + '">' + SC[d.key] + '</span><span class="dna-name">' + d.name + '</span><span class="dna-hint">' + d.hint + '</span></div>';
+  }).join('');
+
+  // Identity + challenge
+  document.getElementById('identity-words').textContent = identity.words;
+  document.getElementById('identity-text').textContent  = identity.text;
+  document.getElementById('challenge-text').textContent = challenge;
+  document.getElementById('challenge-sub').textContent  = 'Personlig udfordring · ' + tp.name + ' · 7 dage';
+
+  // Player description (MutationObserver against extension injection)
+  (function() {
+    var DESC = tp.longDesc;
+    var el   = document.getElementById('player-desc');
+    if (!el) return;
+    el.textContent = DESC;
+    el.style.cssText = 'color:rgba(255,255,255,0.6) !important;text-decoration:none !important;background:none !important';
+    var obs = new MutationObserver(function() {
+      if (el.children.length > 0 || el.textContent !== DESC) el.textContent = DESC;
+    });
+    obs.observe(el, { childList: true, subtree: true, characterData: true });
+  })();
+
+  // ── RADAR CHART ──────────────────────────────────────────────────────────────
+  (function() {
+    var data = [
+      { lines: ['Fysisk', 'dominans'], value: SC.fysik  },
+      { lines: ['Kampinstinkt'],        value: SC.kamp   },
+      { lines: ['Beslutningsmod'],      value: SC.beslut },
+      { lines: ['Holdmentalitet'],      value: SC.hold   },
+      { lines: ['Spilforståelse'],      value: SC.vision },
+      { lines: ['Kreativitet'],         value: SC.kreativ },
+    ];
+    var W = 420, H = 400, cx = 210, cy = 200, R = 100, labelR = 133;
+    var n = data.length;
+    function angle(i) { return (i / n) * 2 * Math.PI - Math.PI / 2; }
+    function pt(i, r) { var a = angle(i); return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r }; }
+    function polyPoints(r) {
+      return data.map(function(_, i) { var p = pt(i, r); return p.x.toFixed(2) + ',' + p.y.toFixed(2); }).join(' ');
+    }
+    var lines = '';
+    [0.25, 0.5, 0.75, 1].forEach(function(scale) {
+      lines += '<polygon points="' + polyPoints(R * scale) + '" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>';
+    });
+    data.forEach(function(_, i) {
+      var p = pt(i, R);
+      lines += '<line x1="' + cx + '" y1="' + cy + '" x2="' + p.x.toFixed(2) + '" y2="' + p.y.toFixed(2) + '" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>';
+    });
+    var dataPts = data.map(function(d, i) {
+      var p = pt(i, (d.value / 100) * R);
+      return p.x.toFixed(2) + ',' + p.y.toFixed(2);
+    }).join(' ');
+    lines += '<polygon points="' + dataPts + '" fill="rgba(255,107,26,0.22)" stroke="#FF6B1A" stroke-width="2" stroke-linejoin="round"/>';
+    data.forEach(function(d, i) {
+      var p = pt(i, (d.value / 100) * R);
+      lines += '<circle cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="4" fill="#FF6B1A"/>';
+    });
+    var LH = 13, TA = 'text-anchor="middle"', FILL = 'fill="rgba(255,255,255,0.6)"';
+    var FONT = 'font-size="10" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="600"';
+    data.forEach(function(d, i) {
+      var p = pt(i, labelR);
+      if (d.lines.length === 1) {
+        lines += '<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" ' + TA + ' dominant-baseline="middle" ' + FILL + ' ' + FONT + '>' + d.lines[0] + '</text>';
+      } else {
+        var y0 = (p.y - LH / 2).toFixed(1);
+        lines += '<text ' + TA + ' ' + FILL + ' ' + FONT + '>';
+        lines += '<tspan x="' + p.x.toFixed(1) + '" y="' + y0 + '">' + d.lines[0] + '</tspan>';
+        lines += '<tspan x="' + p.x.toFixed(1) + '" dy="' + LH + '">' + d.lines[1] + '</tspan>';
+        lines += '</text>';
+      }
+    });
+    document.getElementById('radar-svg-wrap').innerHTML =
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="display:block">' + lines + '</svg>';
+  })();
+
+  // ── MOBILE NAV ────────────────────────────────────────────────────────────────
+  function toggleMobileNav(e) {
+    e.stopPropagation();
+    document.getElementById('nav-hamburger').classList.toggle('open');
+    document.getElementById('nav-drawer').classList.toggle('open');
+  }
+  function closeMobileNav() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-drawer').classList.remove('open');
+  }
+  document.addEventListener('click', closeMobileNav);
+
+  function toggleTheme() {}
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var data = JSON.parse(sessionStorage.getItem('fiq_quiz_result') || '{}');
+    var ovr = data.ovr || 62;
+    if (window.setPreviewTier) {
+      window.setPreviewTier(getTier(ovr));
+    }
+  });
+</script>
+<script>
+/* ============================================================
+   FOOTBALLIQ — Kortdata fra sessionStorage
+   Tier-thresholds: bronze<65, silver 65-74,
+   gold 75-83, elite 84-89, legend 90+
+   ============================================================ */
+(function initCard() {
+  var card = document.getElementById('playerCard');
+  if (!card) return;
+
+  function getTier(ovr) {
+    if (ovr >= 90) return 'legend';
+    if (ovr >= 84) return 'elite';
+    if (ovr >= 75) return 'gold';
+    if (ovr >= 65) return 'silver';
+    return 'bronze';
+  }
+  var TIER_LABELS = {
+    bronze:'BRONZE', silver:'SILVER', gold:'GOLD',
+    elite:'ELITE', legend:'LEGEND'
+  };
+
+  /* Tilpas noeglenavn til hvad quizzen faktisk gemmer.
+     Falder tilbage paa fiq_quiz_result hvis footballiq_* mangler. */
+  var fallback = null;
+  try { fallback = JSON.parse(sessionStorage.getItem('fiq_quiz_result') || 'null'); } catch(e) {}
+
+  var ovr     = parseInt(sessionStorage.getItem('footballiq_ovr') || (fallback && fallback.ovr) || '75', 10);
+  var name    = (sessionStorage.getItem('footballiq_name')    || 'SPILLER').toUpperCase();
+  var pos     = (sessionStorage.getItem('footballiq_pos')     || 'MID').toUpperCase();
+  var tagline = sessionStorage.getItem('footballiq_tagline')  || 'Din spillertype';
+  var stats   = null;
+  try { stats = JSON.parse(sessionStorage.getItem('footballiq_stats') || 'null'); } catch(e) {}
+
+  var tier = getTier(ovr);
+  card.setAttribute('data-tier', tier);
+
+  function el(id) { return document.getElementById(id); }
+  el('cardOvr').textContent     = ovr;
+  el('cardPos').textContent     = pos;
+  el('cardName').textContent    = name;
+  el('cardTagline').textContent = tagline;
+  el('tierBadge').textContent   = TIER_LABELS[tier];
+
+  /* Stats — format: [{val:82, lbl:"PAS"}, ...] (6 elementer) */
+  if (Array.isArray(stats) && stats.length >= 6) {
+    for (var i = 1; i <= 6; i++) {
+      el('s' + i + 'v').textContent = stats[i-1] ? stats[i-1].val : '—';
+      el('s' + i + 'l').textContent = stats[i-1] ? stats[i-1].lbl : '—';
+    }
+  }
+
+  /* Intro-animation */
+  Object.assign(card.style, {
+    opacity: '0',
+    transform: 'scale(0.88) translateY(24px)',
+    transition: 'none'
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      Object.assign(card.style, {
+        opacity: '1',
+        transform: 'scale(1) translateY(0)',
+        transition: 'opacity .55s ease, transform .55s cubic-bezier(0.34,1.56,0.64,1)'
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
