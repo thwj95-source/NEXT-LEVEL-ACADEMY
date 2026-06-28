@@ -1053,8 +1053,8 @@
     /* OVR + position */
     .card-meta {
       position: absolute;
-      top: 14%;
-      left: 12%;
+      top: 18%;
+      left: 23%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -1063,7 +1063,7 @@
     }
     .card-ovr {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: clamp(1.9rem, 10vw, 2.7rem);
+      font-size: clamp(1.25rem, 5.5vw, 1.6rem);
       color: var(--text-hi);
       letter-spacing: -1px;
       text-shadow: 0 0 8px color-mix(in srgb, var(--frame) 55%, transparent);
@@ -1124,7 +1124,7 @@
       text-align: center;
     }
     .card-name {
-      font-size: clamp(0.75rem, 3.8vw, 1rem);
+      font-size: clamp(1.05rem, 5.2vw, 1.4rem);
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -1151,12 +1151,12 @@
       top: 62%;
       left: 50%;
       transform: translateX(-50%);
-      width: 78%;
+      width: 68%;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, auto);
-      row-gap: 12px;
-      column-gap: 4px;
+      row-gap: 6px;
+      column-gap: 2px;
     }
     .stat {
       display: flex;
@@ -1166,16 +1166,16 @@
     }
     .sv {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: clamp(0.72rem, 3.6vw, 0.98rem);
+      font-size: clamp(0.92rem, 4.6vw, 1.25rem);
       color: var(--text-hi);
       letter-spacing: 0.5px;
     }
     .sl {
-      font-size: clamp(0.35rem, 1.7vw, 0.48rem);
-      font-weight: 600;
+      font-size: clamp(0.54rem, 2.7vw, 0.74rem);
+      font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--text-lo);
+      color: color-mix(in srgb, var(--text-hi) 82%, transparent);
     }
 
     /* Tier badge */
