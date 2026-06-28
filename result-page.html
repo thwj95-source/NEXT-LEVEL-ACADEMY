@@ -948,9 +948,9 @@
 
     /* --- Tier CSS-variable --- */
     [data-tier="bronze"] {
-      --frame:           #c8893a;
+      --frame:           #d99b50;
       --frame-secondary: #a06028;
-      --frame-glow:      rgba(200,137,58,0.55);
+      --frame-glow:      rgba(217,155,80,0.55);
       --card-bg-a:       #3d1f06;
       --card-bg-b:       #180900;
       --text-hi:         #f2d48a;
@@ -1053,7 +1053,7 @@
     /* OVR + position */
     .card-meta {
       position: absolute;
-      top: 18%;
+      top: 26%;
       left: 23%;
       display: flex;
       flex-direction: column;
@@ -1065,8 +1065,8 @@
       font-family: 'Bebas Neue', Impact, sans-serif;
       font-size: clamp(1.25rem, 5.5vw, 1.6rem);
       color: var(--text-hi);
-      letter-spacing: -1px;
-      text-shadow: 0 0 8px color-mix(in srgb, var(--frame) 55%, transparent);
+      letter-spacing: 1px;
+      text-shadow: none;
       line-height: 1;
     }
     .card-pos {
@@ -1151,12 +1151,12 @@
       top: 62%;
       left: 50%;
       transform: translateX(-50%);
-      width: 68%;
+      width: 63%;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, auto);
       row-gap: 6px;
-      column-gap: 2px;
+      column-gap: 0px;
     }
     .stat {
       display: flex;
