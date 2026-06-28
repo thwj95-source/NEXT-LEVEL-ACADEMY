@@ -484,6 +484,7 @@
       background: rgba(255, 255, 255, 0.03);
     }
     .type-label {
+      display: none;
       font-size: 11px; font-weight: 700; letter-spacing: 3px;
       color: var(--purple); text-transform: uppercase; margin-bottom: 5px;
     }
@@ -1004,8 +1005,8 @@
     /* --- Card wrapper --- */
     .card-wrapper {
       position: relative;
-      width: 100vw;
-      aspect-ratio: 406 / 407;
+      width: min(75vw, 420px);
+      aspect-ratio: 3 / 4.2;
       background: transparent;
       border-radius: 3px;
       filter: none;
@@ -1042,6 +1043,8 @@
     .card-content {
       position: absolute; inset: 0;
       z-index: 3;
+      display: block !important;
+      padding: 0 !important;
       font-family: 'Rajdhani', 'Arial Narrow', Arial, sans-serif;
       color: var(--text-hi, #fde888);
     }
@@ -1049,7 +1052,8 @@
     /* OVR + position */
     .card-meta {
       position: absolute;
-      top: 9%; left: 9%;
+      top: 14%;
+      left: 12%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -1105,23 +1109,18 @@
       color: var(--text-hi);
     }
 
-    /* Bund-sektion */
+    /* Gammel bund-container: skjult */
     .card-lower {
-      position: absolute;
-      bottom: 5%; left: 0; right: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      padding: 0 8%;
+      display: none !important;
     }
 
     .card-name-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1px;
-      width: 100%;
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      text-align: center;
     }
     .card-name {
       font-size: clamp(0.75rem, 3.8vw, 1rem);
@@ -1136,6 +1135,7 @@
       max-width: 100%;
     }
     .card-tagline {
+      display: none !important;
       font-size: clamp(0.42rem, 2vw, 0.58rem);
       font-weight: 500;
       letter-spacing: 1.5px;
@@ -1146,19 +1146,22 @@
 
     /* Stats 2x3 */
     .card-stats {
+      position: absolute;
+      top: 62%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 78%;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, auto);
-      column-gap: 6px;
-      row-gap: 1px;
-      width: 100%;
-      margin-top: 4px;
+      row-gap: 12px;
+      column-gap: 4px;
     }
     .stat {
       display: flex;
       flex-direction: column;
       align-items: center;
-      line-height: 1.1;
+      gap: 2px;
     }
     .sv {
       font-family: 'Bebas Neue', Impact, sans-serif;
@@ -1356,26 +1359,25 @@
           </div>
         </div>
 
-        <!-- Bund: navn, tagline, stats, tier-badge -->
+        <!-- Spillernavn over dellinjen -->
+        <div class="card-name-wrap">
+          <div class="card-name" id="cardName">SPILLERNAVN</div>
+        </div>
+
+        <!-- Stats under dellinjen: label øverst, tal nedenunder -->
+        <div class="card-stats" id="cardStats">
+          <div class="stat"><span class="sl" id="s1l">PAS</span><span class="sv" id="s1v">&#x2014;</span></div>
+          <div class="stat"><span class="sl" id="s2l">DRI</span><span class="sv" id="s2v">&#x2014;</span></div>
+          <div class="stat"><span class="sl" id="s3l">SHO</span><span class="sv" id="s3v">&#x2014;</span></div>
+          <div class="stat"><span class="sl" id="s4l">VIS</span><span class="sv" id="s4v">&#x2014;</span></div>
+          <div class="stat"><span class="sl" id="s5l">FYS</span><span class="sv" id="s5v">&#x2014;</span></div>
+          <div class="stat"><span class="sl" id="s6l">DEF</span><span class="sv" id="s6v">&#x2014;</span></div>
+        </div>
+
+        <!-- Gammel container: skjult — beholder IDs tilgængelige for JS -->
         <div class="card-lower">
-
-          <div class="card-name-wrap">
-            <div class="card-name"    id="cardName">SPILLERNAVN</div>
-            <div class="card-tagline" id="cardTagline">Din spillertype</div>
-          </div>
-
-          <!-- Stats 2 raekker x 3 kolonner -->
-          <div class="card-stats" id="cardStats">
-            <div class="stat"><span class="sv" id="s1v">&#x2014;</span><span class="sl" id="s1l">PAS</span></div>
-            <div class="stat"><span class="sv" id="s2v">&#x2014;</span><span class="sl" id="s2l">DRI</span></div>
-            <div class="stat"><span class="sv" id="s3v">&#x2014;</span><span class="sl" id="s3l">SHO</span></div>
-            <div class="stat"><span class="sv" id="s4v">&#x2014;</span><span class="sl" id="s4l">VIS</span></div>
-            <div class="stat"><span class="sv" id="s5v">&#x2014;</span><span class="sl" id="s5l">FYS</span></div>
-            <div class="stat"><span class="sv" id="s6v">&#x2014;</span><span class="sl" id="s6l">DEF</span></div>
-          </div>
-
-          <div class="tier-badge" id="tierBadge">GOLD</div>
-
+          <div class="card-tagline" id="cardTagline">Din spillertype</div>
+          <div class="tier-badge"  id="tierBadge">GOLD</div>
         </div>
       </div><!-- /card-content -->
     </div><!-- /card-wrapper -->
